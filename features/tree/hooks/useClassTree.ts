@@ -1,5 +1,5 @@
-import { useStartupContext } from '@/components/contexts/StartupContext';
 import { ParsedTreeNode } from '@/features/tree/types';
+import { useStartupContext } from '@/shared/components/contexts/StartupContext';
 import { ADEApi } from '@/shared/services/ade/adeApi';
 import { StorageManager } from '@/shared/services/storage/storage';
 import { useRouter } from 'expo-router';

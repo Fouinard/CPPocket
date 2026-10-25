@@ -1,4 +1,4 @@
-import OptionsLink from "@/features/components/OptionsLink";
+import OptionsLink from "@/features/options/components/OptionsLink";
 import colors from "@/styles/colors";
 import { GraduationHat, Lock } from "@getpapillon/papicons";
 import { ScrollView, Text } from "react-native";

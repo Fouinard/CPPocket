@@ -16,7 +16,7 @@ export default function () {
             <Link href="/startup">
                 <Text className="text-text">Startup</Text>
             </Link>
-            <Link href="/(options)/adetreescreen">
+            <Link href="/(options)/treeselector">
                 <Text className="text-text">AdetreeScreen</Text>
             </Link>
             <Pressable onPress={async () => {

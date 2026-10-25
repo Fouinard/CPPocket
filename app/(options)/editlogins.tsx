@@ -1,6 +1,6 @@
 import { EditLoginsScreen } from "@/features/options/screens/EditLoginsScreen";
 
 
-export default function Options() {
+export default function EditLogins() {
     return <EditLoginsScreen />
 }

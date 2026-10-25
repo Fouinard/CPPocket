@@ -1,4 +1,4 @@
-import Class from "@/components/schedule/Class";
+import Class from "@/features/schedule/components/Class";
 import { Text, View } from "react-native";
 
 export default function TestPage1() {

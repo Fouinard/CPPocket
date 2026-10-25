@@ -1,5 +1,5 @@
 import EyeIcon from "@/assets/icons/eyeicon.svg";
-import { useStartupContext } from "@/components/contexts/StartupContext";
+import { useStartupContext } from "@/shared/components/contexts/StartupContext";
 import { ADEApi } from "@/shared/services/ade/adeApi";
 import { SessionManager } from "@/shared/services/ade/session/SessionManager";
 import { StorageManager } from "@/shared/services/storage/storage";
