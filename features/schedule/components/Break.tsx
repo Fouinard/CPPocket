@@ -1,4 +1,4 @@
-import { formatTime, getDurationFormatted } from "@/utils/Time";
+import { formatTime, getDurationFormatted } from "@/shared/utils/Time";
 import { Text, View } from "react-native";
 
 interface BreakData {

@@ -1,9 +1,9 @@
 import BottomNavBar from "@/shared/components/BottomNavBar";
-import { LessonsProvider } from "@/shared/components/contexts/LessonsContext";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
 import { StorageManager } from "@/shared/services/storage/storage";
 import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from 'expo-font';
 import { Redirect, RelativePathString, Stack } from "expo-router"; // Import de Slot
 import * as SplashScreen from "expo-splash-screen";
@@ -33,7 +33,7 @@ export default function RootLayout() {
                 } else if (!classId) {
                     setInitialRoute("(options)/treeselector");
                 } else {
-                    setInitialRoute("(schedule)/schedule");
+                    setInitialRoute("schedule/schedule");
                 }
             } catch (error) {
                 console.error(error);
@@ -50,9 +50,17 @@ export default function RootLayout() {
         return null;
     }
 
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 15 * 60 * 1000,
+            },
+        },
+    });
+
     return (
         <StartupProvider onReady={() => SplashScreen.hideAsync()}>
-            <LessonsProvider>
+            <QueryClientProvider client={queryClient}>
                 <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
                     <Stack
                         screenOptions={{
@@ -64,7 +72,7 @@ export default function RootLayout() {
                     <BottomNavBar />
                     <Toast config={toastConfig} />
                 </View>
-            </LessonsProvider>
+            </QueryClientProvider>
         </StartupProvider>
     );
 }

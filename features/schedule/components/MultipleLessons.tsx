@@ -1,6 +1,6 @@
 // import { formatTime, getDurationFormatted } from "@/utils/Time";
-import { ParsedLesson } from "@/types/schedule.types";
-import { formatTime } from "@/utils/Time";
+import { ParsedLesson } from "@/features/schedule/types";
+import { formatDateKey, formatTime } from "@/shared/utils/Time";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 
@@ -11,11 +11,13 @@ interface MultipleLessonsData {
 }
 
 export default function ({ startDate, endDate }: MultipleLessonsData) {
+
     return (
         <Pressable className="w-full h-32" onPress={() => {
             router.push({
-                pathname: "/(schedule)/multipleLessons"
-            })
+                pathname: "/schedule/multiplelessons",
+                params: { dateKey:formatDateKey(startDate), startTime: startDate.getTime() }
+            });
         }}>
             <View className="flex flex-row w-full gap-4 h-32">
                 <View className="flex flex-col items-end w-1/5 h-full">

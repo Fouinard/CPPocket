@@ -1,19 +1,19 @@
-import { View, Text, Pressable } from "react-native";
-import { Calendar, TextBubble, Gears, Code } from "@getpapillon/papicons"
+import { Calendar, Code, Gears } from "@getpapillon/papicons";
 import { Link, RelativePathString, usePathname } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 
-export default function () {
-    const disabledPathnames = ["/startup", "/adetreescreen"]
+export default function BottomNavBar() {
+    const disabledPathnames = ["/startup", "/(options)/treeselector"];
     const pathname = usePathname();
     const navBar = [
         {
             icon: Calendar,
             text: "Cours",
-            open: ["/schedule", "/multipleLessons"]
+            open: ["/schedule", "/schedule/schedule"]
         }, {
             icon: Gears,
             text: "Options",
-            open: ["/options", "/classSelection"]
+            open: ["/options", "/(options)/options"]
         }, {
             icon: Code,
             text: "Dev",

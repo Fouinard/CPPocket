@@ -1,5 +1,5 @@
 import { StorageManager } from '@/shared/services/storage/storage';
-import { CookieDict, findCookie } from '@/utils/cookies';
+import { CookieDict, findCookie } from '@/shared/utils/cookies';
 import { ExpandableNodeTypes } from '../../../../features/tree/types';
 import { ADE_DEFAULTS } from '../api/constants';
 import { createSession, valiateSession } from '../api/sessionEndpoints';

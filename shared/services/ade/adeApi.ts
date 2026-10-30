@@ -1,5 +1,5 @@
+import { ParsedLesson } from "@/features/schedule/types";
 import { NodeType, ParsedTreeNode } from "@/features/tree/types";
-import { ParsedLesson } from "@/types/schedule.types";
 import { getIcal } from "./api/scheduleEndpoints";
 import { expandTreeNode, fetchTreeRootEndpoint, selectTreeNode } from "./api/treeEndpoints";
 import parseHtmlTree from "./parsers/parseHtmlTree";

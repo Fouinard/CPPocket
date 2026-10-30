@@ -114,3 +114,16 @@ export const getClosestDay = (date: Date): Date => {
     }
     return date;
 }
+
+export function formatDateKey(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+export function safeDate(date: any): Date | null {
+    if (!date) return null;
+    const dateObj = date instanceof Date ? date : new Date(date);
+    return isNaN(dateObj.getTime()) || dateObj.getFullYear() < 2000 ? null : dateObj;
+};

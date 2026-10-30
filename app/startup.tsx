@@ -134,7 +134,7 @@ export default function () {
                     return;
                 } else {
                     await SessionManager.getInstance().selectClass(hasClassSelected);
-                    router.push("/schedule");
+                    router.push("/schedule/schedule");
                 }
 
             }}>

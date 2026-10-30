@@ -1,18 +1,25 @@
-import Class from "@/features/schedule/components/Class";
-import { useLessonsContext } from "@/shared/components/contexts/LessonsContext";
-import { dateToNaturalLanguage, getRelativeDate } from "@/utils/Time";
+import { Lesson } from "@/features/schedule/components/Lesson";
+import { dateToNaturalLanguage, getRelativeDate } from "@/shared/utils/Time";
+import { useQueryClient } from "@tanstack/react-query";
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
+import { ScheduleDayData } from "../types";
 
 export default function MultipleLessonsScreen() {
-    const lessonsContext = useLessonsContext();
-    const lessons = lessonsContext.getLessons();
-    const displayedDate = lessonsContext.getDate();
-    const hours = lessonsContext.getHours();
+    const { dateKey, startTime } = useLocalSearchParams<{ dateKey: string; startTime: string }>();
+    const queryClient = useQueryClient();
+
+    const data = queryClient.getQueryData<ScheduleDayData>(['schedule', dateKey]);
+    const displayedDate = data?.date || new Date();
+
+    const targetPeriod = data?.periods.filter(
+        l => l.startDate.getTime() === Number(startTime)
+    ) || [];
 
     return (
         <View className="flex-1 pt-16 bg-bg px-5">
             <Text className="text-text text-3xl font-semibold">
-                {dateToNaturalLanguage(displayedDate)} - {hours.start}h à {hours.end}h
+                {dateToNaturalLanguage(displayedDate)} - {targetPeriod[0]?.startDate.getHours()}h à {targetPeriod[0]?.endDate.getHours()}h
             </Text>
             <Text className="text-grey text-lg font-normal">
                 {getRelativeDate(displayedDate)}
@@ -21,11 +28,11 @@ export default function MultipleLessonsScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerClassName="flex-col gap-2 pb-[200] mb-4"
             >
-                {
-                    lessons.map((lesson, index) => (
-                        <Class
+                {targetPeriod[0]?.lessons &&
+                    targetPeriod[0]?.lessons.map((lesson, index) => (
+                        <Lesson
                             key={`lesson-${lesson.startDate.getTime()}-${lesson.subject}`}
-                            classData={lesson}
+                            lessonData={lesson}
                         />
                     ))
                 }

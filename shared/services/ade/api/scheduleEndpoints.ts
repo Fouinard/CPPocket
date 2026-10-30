@@ -1,5 +1,5 @@
 import buildIcalQueryParams from "@/shared/services/ade/utils/buildIcalQueryParams";
-import { getWeekdays } from "@/utils/Time";
+import { getClosestDay } from "@/shared/utils/Time";
 import { ADEGetIcalParams } from "../types/schedule.types";
 import { buildBaseUrl } from "./constants";
 
@@ -7,17 +7,9 @@ export async function getIcal(params: ADEGetIcalParams): Promise<string> {
 
     const baseUrl = buildBaseUrl(params);
 
-    const baseDate = params.startDate ? new Date(params.startDate) : new Date();
+    const startDate = getClosestDay(params.startDate ? new Date(params.startDate) : new Date());
 
-    const startWeek = getWeekdays(baseDate);
-
-    const startDate = params.startDate && params.endDate
-        ? baseDate
-        : new Date(startWeek.startYear, startWeek.startMonth - 1, startWeek.startDay);
-
-    const endDate = params.endDate
-        ? new Date(params.endDate)
-        : new Date(startWeek.endYear, startWeek.endMonth - 1, startWeek.endDay);
+    const endDate = getClosestDay(params.endDate ? new Date(params.endDate) : new Date(startDate));
 
     const bodyParams = buildIcalQueryParams({ startDate, endDate });
 

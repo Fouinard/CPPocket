@@ -1,4 +1,4 @@
-import { CookieDict, findCookie, getCookies } from "@/utils/cookies";
+import { CookieDict, findCookie, getCookies } from "@/shared/utils/cookies";
 import { ADEAuthenticatedParams, ADESessionParams } from "../types/session.types";
 import { ADE_DEFAULTS, buildBaseUrl } from "./constants";
 

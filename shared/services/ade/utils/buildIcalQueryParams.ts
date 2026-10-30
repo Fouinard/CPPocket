@@ -1,4 +1,4 @@
-import { formatNumber } from "@/utils/Numbers";
+import { formatNumber } from "@/shared/utils/Numbers";
 import { DateRangeParams } from "../types/schedule.types";
 
 export default function buildIcalQueryParams(params: DateRangeParams) {
