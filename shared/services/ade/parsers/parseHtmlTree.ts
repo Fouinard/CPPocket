@@ -1,10 +1,12 @@
 import { parse } from 'node-html-parser';
+
 import { NodeType, ParentNode, ParsedTreeNode } from "../../../../features/tree/types";
 
+
 export default function parseHtmlTree(html: string): ParsedTreeNode[] {
+
     const root = parse(html);
     const nodes: ParsedTreeNode[] = [];
-
     const treeLines = root.querySelectorAll('div.treeline, div.treelineselected');
     const parentStack: ParentNode[] = [];
 
@@ -14,9 +16,10 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
         const nbspMatches = rawHtml.match(/&nbsp;/g);
         const level = nbspMatches ? Math.floor(nbspMatches.length / 3) : 0;
 
+        const isExpandable = line.querySelector('.treeline, .treecross') !== null || rawHtml.includes('plus.gif') || rawHtml.includes('moins.gif');
         const isExpanded = rawHtml.includes('moins.gif');
-        const isSelect = rawHtml.includes('blankTree.gif');
-        const isSelected = line.classList.contains('treelineselected')
+        const isSelectable = line.querySelector('.treecross') !== null || rawHtml.includes('blankTree.gif');
+        const isSelected = line.classList.contains('treelineselected');
 
         const links = line.querySelectorAll('a');
         let actionLink = null;
@@ -47,6 +50,7 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
         if (!href) continue;
 
         const funcMatch = href.match(/javascript:([a-zA-Z]+)\(([^)]+)\)/);
+
         if (!funcMatch) continue;
 
         const [, funcName, rawArgs] = funcMatch;
@@ -55,9 +59,8 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
 
         const label = actionLink ? actionLink.textContent.trim() : line.textContent.replace(/&nbsp;/g, '').trim();
 
-        const isSelectable = isSelect || funcName === 'check';
-
         let type: NodeType = 'branch';
+
         if (funcName.includes('Category')) {
             type = 'category';
         } else if (isSelectable) {
@@ -79,6 +82,7 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
             label,
             type,
             level,
+            isExpandable,
             isExpanded,
             isSelectable,
             isSelected,
@@ -87,4 +91,4 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
     }
 
     return nodes;
-}
+} 

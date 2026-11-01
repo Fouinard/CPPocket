@@ -15,6 +15,7 @@ export interface ParsedTreeNode {
   type: NodeType;
   level: number;
   isExpanded: boolean;
+  isExpandable: boolean;
   isSelectable: boolean;
   parents: ParentNode[];
   isSelected: boolean;

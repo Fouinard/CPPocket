@@ -132,7 +132,7 @@ export function useClassTree() {
 
             setIsAlertVisible(false);
             setPendingNode(null);
-            router.push("/schedule");
+            router.push("/schedule/schedule");
         } catch (error) {
             console.error("Erreur lors du changement de classe:", error);
             setIsAlertVisible(false);
