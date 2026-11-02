@@ -33,7 +33,7 @@ export default function RootLayout() {
                 } else if (!classId) {
                     setInitialRoute("(options)/treeselector");
                 } else {
-                    setInitialRoute("schedule/schedule");
+                    setInitialRoute("/schedule/schedule");
                 }
             } catch (error) {
                 console.error(error);

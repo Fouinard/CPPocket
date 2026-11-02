@@ -1,12 +1,14 @@
-export type ExpandableNodeTypes = "category" | "branch";
-
-export type SelectableNodeTypes = "select";
-
-export type NodeType = ExpandableNodeTypes | SelectableNodeTypes;
+export type NodeType = "category" | "branch" | "select"
 
 export interface ParentNode {
   id: string;
-  type: ExpandableNodeTypes;
+  type: Extract<NodeType, "category" | "branch">;
+}
+
+export const enum TreeNodeSelectionState {
+  None = 0,
+  Selected = 1,
+  Unselected = 2
 }
 
 export interface ParsedTreeNode {
@@ -14,9 +16,12 @@ export interface ParsedTreeNode {
   label: string;
   type: NodeType;
   level: number;
-  isExpanded: boolean;
   isExpandable: boolean;
+  isExpanded: boolean;
   isSelectable: boolean;
-  parents: ParentNode[];
   isSelected: boolean;
+  parentId: string | "__root";
+  childrenIds: string[];
+
+  selectionState: TreeNodeSelectionState;
 }

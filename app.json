@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "INP-Bridge",
-    "slug": "INP-Bridge",
+    "name": "CPPocket",
+    "slug": "CPPocket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "inpbridge",
+    "scheme": "cppocket",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.fouinard.INPBridge"
+      "package": "com.fouinard.cppocket"
     },
     "web": {
       "output": "static",

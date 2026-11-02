@@ -1,4 +1,4 @@
-import { ExpandableNodeTypes } from "@/features/tree/types";
+import { NodeType } from "@/features/tree/types";
 import { ADESessionParams } from "./session.types";
 
 export interface TreeRequestParams extends ADESessionParams {
@@ -6,7 +6,7 @@ export interface TreeRequestParams extends ADESessionParams {
 }
 
 export interface TreeExpandParams extends TreeRequestParams {
-  nodeType: ExpandableNodeTypes;
+  nodeType: Extract<NodeType, "category" | "branch">;
 }
 
 export interface TreeRequestResponse {

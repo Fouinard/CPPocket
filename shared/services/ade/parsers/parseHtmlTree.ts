@@ -1,14 +1,12 @@
+import { NodeType, ParsedTreeNode, TreeNodeSelectionState } from '@/features/tree/types';
 import { parse } from 'node-html-parser';
 
-import { NodeType, ParentNode, ParsedTreeNode } from "../../../../features/tree/types";
-
-
-export default function parseHtmlTree(html: string): ParsedTreeNode[] {
-
+export default function parseHtmlTree(html: string): Record<string, ParsedTreeNode> {
     const root = parse(html);
-    const nodes: ParsedTreeNode[] = [];
+    const nodesMap: Record<string, ParsedTreeNode> = {};
     const treeLines = root.querySelectorAll('div.treeline, div.treelineselected');
-    const parentStack: ParentNode[] = [];
+    
+    const levelParentStack: string[] = [];
 
     for (const line of treeLines) {
         const rawHtml = line.innerHTML;
@@ -16,8 +14,8 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
         const nbspMatches = rawHtml.match(/&nbsp;/g);
         const level = nbspMatches ? Math.floor(nbspMatches.length / 3) : 0;
 
-        const isExpandable = line.querySelector('.treeline, .treecross') !== null || rawHtml.includes('plus.gif') || rawHtml.includes('moins.gif');
-        const isExpanded = rawHtml.includes('moins.gif');
+        const isExpandable = rawHtml.includes('/plus.gif') || rawHtml.includes('/moins.gif');
+        const isExpanded = rawHtml.includes('/moins.gif');
         const isSelectable = line.querySelector('.treecross') !== null || rawHtml.includes('blankTree.gif');
         const isSelected = line.classList.contains('treelineselected');
 
@@ -50,45 +48,51 @@ export default function parseHtmlTree(html: string): ParsedTreeNode[] {
         if (!href) continue;
 
         const funcMatch = href.match(/javascript:([a-zA-Z]+)\(([^)]+)\)/);
-
         if (!funcMatch) continue;
 
         const [, funcName, rawArgs] = funcMatch;
-
         const nodeId = rawArgs.split(',')[0].replace(/['";]/g, '').trim();
-
         const label = actionLink ? actionLink.textContent.trim() : line.textContent.replace(/&nbsp;/g, '').trim();
 
         let type: NodeType = 'branch';
-
-        if (funcName.includes('Category')) {
+        if (line.querySelector('.treecategory') !== null) {
             type = 'category';
-        } else if (isSelectable) {
+        } else if (line.querySelector('.treeitem') !== null) {
             type = 'select';
         }
 
-        parentStack.length = level;
-        const parents: ParentNode[] = [...parentStack];
+        levelParentStack.length = level;
+        const parentId = level > 0 ? levelParentStack[level - 1] : '__root';
 
         if (type === 'category' || type === 'branch') {
-            parentStack[level] = {
-                id: nodeId,
-                type: type as Extract<NodeType, 'category' | 'branch'>
-            };
+            levelParentStack[level] = nodeId;
         }
 
-        nodes.push({
+        const newNode: ParsedTreeNode = {
             id: nodeId,
             label,
             type,
             level,
             isExpandable,
+            isSelectable: isSelectable,
+            parentId,
+            childrenIds: [],
             isExpanded,
-            isSelectable,
             isSelected,
-            parents
-        });
+            selectionState: isSelectable ? (isSelected ? TreeNodeSelectionState.Selected : TreeNodeSelectionState.Unselected) : TreeNodeSelectionState.None
+        };
+
+        nodesMap[nodeId] = newNode;
+
+        if (parentId && nodesMap[parentId]) {
+            if (!nodesMap[parentId]?.childrenIds.includes(nodeId)) {
+                nodesMap[parentId]?.childrenIds.push(nodeId);
+                console.log(nodeId, "added to", parentId);
+            }
+        }
     }
 
-    return nodes;
-} 
+    console.log("nodesMap parse", nodesMap);
+
+    return nodesMap;
+}

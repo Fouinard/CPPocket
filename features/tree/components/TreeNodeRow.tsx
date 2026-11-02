@@ -1,4 +1,4 @@
-import { ParsedTreeNode } from "@/features/tree/types";
+import { ParsedTreeNode, TreeNodeSelectionState } from "@/features/tree/types";
 import { ChevronRight } from "@getpapillon/papicons";
 import Checkbox from "expo-checkbox";
 import { memo } from "react";
@@ -8,7 +8,8 @@ interface TreeNodeRowProps {
   node: ParsedTreeNode;
   isExpanded: boolean;
   isLoading: boolean;
-  onPress: (node: ParsedTreeNode) => void;
+  onExpand: (node: ParsedTreeNode) => void;
+  onSelect: (node: ParsedTreeNode) => void;
   isSelected: boolean
 }
 
@@ -17,20 +18,20 @@ export const TreeNodeRow = memo(
 
     return (
       <TouchableOpacity
-        onPress={() => props.onPress(props.node)}
+        onPress={() => props.onExpand(props.node)}
         className="flex flex-row items-center gap-2"
         style={{paddingLeft: props.node.level * 16}}
       >
-        {!props.node.isSelectable && 
+        {props.node.isExpandable && 
           <ChevronRight className="fill-primary size-[17px]" 
           //@ts-ignore 
           style={{ transform: [{ rotate: props.isExpanded ? '90deg' : '0deg' }]}} 
           color="white" />
         }
-        {props.node.isSelectable && 
+        {!props.node.isExpandable && props.node.isSelectable && props.node.childrenIds.length == 0 && 
         <Checkbox
-          value={props.isSelected}
-          onValueChange={()=>props.onPress(props.node)}
+          value={props.node.selectionState === TreeNodeSelectionState.Selected}
+          onValueChange={()=>props.onSelect(props.node)}
           color={props.isSelected ? '#0055FF' : undefined}
         />
         }
@@ -42,7 +43,6 @@ export const TreeNodeRow = memo(
     return (
       prev.node.id === next.node.id &&
       prev.isExpanded === next.isExpanded &&
-      prev.isLoading === next.isLoading &&
       prev.isSelected === next.isSelected
     );
   }

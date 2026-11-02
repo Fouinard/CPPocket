@@ -9,7 +9,7 @@ export default function BottomNavBar() {
         {
             icon: Calendar,
             text: "Cours",
-            open: ["/schedule", "/schedule/schedule"]
+            open: ["/schedule/schedule"]
         }, {
             icon: Gears,
             text: "Options",

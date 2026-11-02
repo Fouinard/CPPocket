@@ -9,7 +9,7 @@ import parseRawHtml from "./parsers/parseRawHtml";
 import { SessionManager } from "./session/SessionManager";
 import { TreeRequestResponse } from "./types/tree.types";
 
-function processHtmlBuffer(buffer: ArrayBuffer): ParsedTreeNode[] {
+function processHtmlBuffer(buffer: ArrayBuffer) {
     const parsedHtml = parseRawHtml(buffer);
     return parseHtmlTree(parsedHtml);
 }
@@ -23,7 +23,7 @@ export const ADEApi = {
             return parsedNodes;
         },
     
-        async expandNode(nodeId: string, nodeType: NodeType): Promise<ParsedTreeNode[]> {
+        async expandNode(nodeId: string, nodeType: NodeType): Promise<Record<string, ParsedTreeNode>> {
             const response = await SessionManager.getInstance().authenticatedRequest(
                 expandTreeNode,
                 {
@@ -36,7 +36,7 @@ export const ADEApi = {
             return parsedNodes;
         },
     
-        async selectNode(nodeId: string): Promise<ParsedTreeNode[]> {
+        async selectNode(nodeId: string): Promise<Record<string, ParsedTreeNode>> {
             const response = await SessionManager.getInstance().authenticatedRequest(
                 selectTreeNode,
                 {

@@ -1,3 +1,4 @@
+// src/features/tree/screens/ADETreeScreen.tsx
 import { TreeConfirmationModal } from '@/features/tree/components/TreeConfirmationModal';
 import { TreeNodeRow } from '@/features/tree/components/TreeNodeRow';
 import { useClassTree } from '@/features/tree/hooks/useClassTree';
@@ -10,10 +11,11 @@ export default function ADETreeScreen() {
         visibleNodes,
         expandedNodeIds,
         loadingNodeId,
-        selectedNode,
+        isNodeSelected,
         isAlertVisible,
         pendingNode,
-        handleNodePress,
+        handleNodeExpand,
+        handleNodeSelect,
         handleConfirmSelection,
         handleCancelSelection,
     } = useClassTree();
@@ -23,10 +25,11 @@ export default function ADETreeScreen() {
             node={item}
             isExpanded={expandedNodeIds.has(item.id)}
             isLoading={loadingNodeId === item.id}
-            isSelected={selectedNode?.id === item.id && item.isSelectable}
-            onPress={handleNodePress}
+            isSelected={isNodeSelected(item)}
+            onExpand={handleNodeExpand}
+            onSelect={handleNodeSelect}
         />
-    ), [expandedNodeIds, loadingNodeId, handleNodePress, selectedNode]);
+    ), [expandedNodeIds, loadingNodeId, handleNodeExpand, handleNodeSelect, isNodeSelected]);
 
     return (
         <View className="flex-1 pt-16 bg-bg px-5">
