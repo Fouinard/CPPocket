@@ -21,7 +21,7 @@ export async function createSession(params: ADEAuthenticatedParams): Promise<Coo
     const bigipserver = findCookie(cookies, "bigipserver")?.value;
 
     if (!jsessionid) {
-        throw new Error(`Failed to create session: jsessionid: ${jsessionid}; bigipserver: ${bigipserver}`);
+        throw new Error(`Failed to create session`);
     }
 
     return cookies;
@@ -52,7 +52,7 @@ export async function valiateSession(params: ADESessionParams): Promise<CookieDi
     const acceswebcookie = findCookie(fetchedCookies, "accesweb")?.value;
 
     if (!acceswebcookie) {
-        throw new Error(`Failed to validate session: acceswebcookie: ${acceswebcookie}; jsessionid: ${params.cookieString}`);
+        throw new Error(`Failed to validate session`);
     }
 
     return fetchedCookies;
