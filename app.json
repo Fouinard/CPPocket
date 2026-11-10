@@ -42,7 +42,13 @@
       "expo-secure-store",
       "expo-font",
       "expo-asset",
-      "expo-image"
+      "expo-image",
+      [
+        "expo-file-system",
+        {
+          "isDocumentDirectoryExternalStorage": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

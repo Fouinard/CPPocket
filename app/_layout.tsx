@@ -1,6 +1,7 @@
 import BottomNavBar from "@/shared/components/BottomNavBar";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
 import { StorageManager } from "@/shared/services/storage/storage";
+import Logger from "@/shared/services/logger/logger"
 import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -11,7 +12,6 @@ import { useEffect, useState } from "react";
 import { View } from "react-native";
 import Toast from "react-native-toast-message";
 
-// Garde l'écran natif figé
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -35,9 +35,11 @@ export default function RootLayout() {
                 } else {
                     setInitialRoute("/schedule/schedule");
                 }
+                Logger.info("Initial route set", { route: initialRoute });
             } catch (error) {
                 console.error(error);
                 setInitialRoute("startup");
+                Logger.error("Error in prepareApp", error);
             } finally {
                 setDbReady(true);
             }
