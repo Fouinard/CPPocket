@@ -9,9 +9,9 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "build:android:arm-v8a": "APP_VARIANT=production npx expo prebuild && cd android && gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a && cd ..",
+    "build:android:arm-v8a": "cross-env APP_VARIANT=production npx expo prebuild && cd android && gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a && cd ..",
     "build:android:debug-arm-v8a": "npx expo prebuild && cd android && gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a && cd ..",
-    "push:release": "adb install android/app/build/outputs/apk/debug/app-release.apk",
+    "push:release": "adb install android/app/build/outputs/apk/release/app-release.apk",
     "push:debug": "adb install android/app/build/outputs/apk/debug/app-debug.apk"
   },
   "dependencies": {
@@ -64,6 +64,7 @@
   "devDependencies": {
     "@types/node": "^26.4.1",
     "@types/react": "~19.3.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3"
