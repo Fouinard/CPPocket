@@ -5,26 +5,20 @@ import { SessionManager } from "@/shared/services/ade/session/SessionManager";
 import { StorageManager } from "@/shared/services/storage/storage";
 import colors from "@/styles/colors";
 import { Checkbox } from "expo-checkbox";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function () {
-
     const router = useRouter();
-
     const [privacyChecked, setPrivacyChecked] = useState(false);
     const [termsChecked, setTermsChecked] = useState(false);
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
     const [hiddenPassword, setHiddenPassword] = useState(true);
-
     const setStartupReady = useStartupContext();
     setStartupReady();
-
     return (
         <ScrollView className="flex-1 pt-16 bg-bg px-5">
             <Text className="text-text text-3xl font-semibold h-32">
@@ -37,12 +31,13 @@ export default function () {
                     </Text>
                     <TextInput
                         placeholder="nomp"
+                        autoCapitalize="none"
+                        keyboardType="visible-password"
                         className="text-text border border-text px-3 h-12 rounded-md justify-center"
                         placeholderTextColor={colors.grey}
                         onChangeText={setUsername}
                     />
                 </View>
-
                 {/* Champ Mot de passe */}
                 <View className="flex flex-col gap-2">
                     <Text className="text-text text-xl">
@@ -51,6 +46,7 @@ export default function () {
                     <View className="flex-row items-center border border-text rounded-md px-3 h-12">
                         <TextInput
                             placeholder="••••••••••••••"
+                            autoCapitalize="none"
                             onChangeText={setPassword}
                             className="flex-1 text-text h-full p-0"
                             placeholderTextColor={colors.grey}
@@ -65,22 +61,8 @@ export default function () {
                     </View>
                 </View>
                 <Pressable
-                    onPress={() => setPrivacyChecked(!privacyChecked)}
-                    className="flex-row items-center gap-3 mt-5"
-                >
-                    <Checkbox
-                        value={privacyChecked}
-                        onValueChange={setPrivacyChecked}
-                        color={privacyChecked ? colors.accent : undefined}
-                    />
-                    <Text className="text-text flex-1">
-                        J'ai lu et pris connaissance de la politique de confidentialité
-                    </Text>
-                </Pressable>
-
-                <Pressable
                     onPress={() => setTermsChecked(!termsChecked)}
-                    className="flex-row items-center gap-3"
+                    className="flex-row items-center gap-3 mt-5"
                 >
                     <Checkbox
                         value={termsChecked}
@@ -88,26 +70,59 @@ export default function () {
                         color={termsChecked ? colors.accent : undefined}
                     />
                     <Text className="text-text flex-1">
-                        J'ai lu et pris connaissance des conditions d'utilisations
+                        J'ai lu et pris connaissance des{' '}
+                        <Link href={
+                            {
+                                pathname: "/viewers/MarkdownViewer",
+                                params: {
+                                    markdownUrl: "https://cdn.fouinard.fr/CPPocket/cgu.md"
+                                }
+                            }
+                        } style={{ color: colors.accent }}>
+                            conditions d'utilisations
+                        </Link>
+                    </Text>
+                </Pressable>
+                <Pressable
+                    onPress={() => setPrivacyChecked(!privacyChecked)}
+                    className="flex-row items-center gap-3"
+                >
+                    <Checkbox
+                        value={privacyChecked}
+                        onValueChange={setPrivacyChecked}
+                        color={privacyChecked ? colors.accent : undefined}
+                    />
+                    <Text className="text-text flex-1">
+                        J'ai lu et pris connaissance de la{' '}
+                        <Link href={
+                            {
+                                pathname: "/viewers/MarkdownViewer",
+                                params: {
+                                    markdownUrl: "https://cdn.fouinard.fr/CPPocket/politique_confidentialite.md"
+                                }
+                            }
+                        } style={{ color: colors.accent }}>
+                            politique de confidentialité
+                        </Link>
                     </Text>
                 </Pressable>
             </View>
             <Pressable className="mt-10 p-2 border border-text rounded-md w-1/2 self-center" onPress={async () => {
-                if (!privacyChecked) {
-                    return Toast.show({
-                        type: 'error',
-                        text2: 'Vous devez accepter la politique de confidentialité pour continuer.',
-                        position: 'bottom',
-                    })
-                }
                 if (!termsChecked) {
                     return Toast.show({
                         type: 'error',
                         text2: 'Vous devez accepter les conditions d\'utilisation pour continuer.',
                         position: 'bottom',
-                    })
+                    });
                 }
-                Toast.hide()
+                if (!privacyChecked) {
+                    return Toast.show({
+                        type: 'error',
+                        text2: 'Vous devez accepter la politique de confidentialité pour continuer.',
+                        position: 'bottom',
+                    });
+                }
+                Toast.hide();
                 try {
                     await ADEApi.Auth.createSession({ username, password });
                 } catch (error) {
@@ -115,7 +130,7 @@ export default function () {
                         type: 'error',
                         text2: `Identifiants invalides !`,
                         position: 'bottom',
-                    })
+                    });
                     return;
                 }
                 await StorageManager.Secure.set('username', username);
@@ -124,10 +139,8 @@ export default function () {
                     type: 'success',
                     text2: `Identifiants enregistrés avec succès !`,
                     position: 'bottom',
-                })
-
+                });
                 const hasClassSelected = await StorageManager.Default.get<string[][]>('ADEClassTreeList');
-
                 if (!hasClassSelected) {
                     await StorageManager.Secure.remove('ADEClassTreeList');
                     router.push("/treeselector");
@@ -136,7 +149,6 @@ export default function () {
                     await SessionManager.getInstance().selectClass(hasClassSelected);
                     router.push("/schedule/schedule");
                 }
-
             }}>
                 <Text className="text-text text-center">
                     Se connecter

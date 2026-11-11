@@ -8,17 +8,12 @@ import useSchedulePager from "../hooks/useSchedulePager";
 
 export default function ScheduleScreen() {
     const setStartupReady = useStartupContext();
-
     const { currentDate, displayedDate, pager } = useSchedulePager();
-
     const pagerRef = useRef<PagerViewRef>(null);
-
     const [timePickerShow, setTimePickerShow] = useState(false);
-
     useEffect(() => {
         setStartupReady();
     });
-
     return (
         <View className="flex-1 pt-16 bg-bg px-5">
             {timePickerShow && (
@@ -36,8 +31,9 @@ export default function ScheduleScreen() {
                     onDismiss={() => setTimePickerShow(false)}
                 />
             )}
-
-            <Pressable onPress={() => setTimePickerShow(true)}>
+            <Pressable
+                onPress={() => {setTimePickerShow(true)}}
+            >
                 <Text className="text-text text-3xl font-semibold">
                     {displayedDate.naturalLanguageDate}
                 </Text>
@@ -45,7 +41,6 @@ export default function ScheduleScreen() {
                     {displayedDate.naturalRelativeTime}
                 </Text>
             </Pressable>
-
             <PagerView
                 key={currentDate.date.toISOString()}
                 ref={pagerRef}

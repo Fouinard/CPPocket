@@ -19,7 +19,7 @@ export default class Logger {
         this.initialized = true
     }
 
-    private static log(level: LogLevel, message: string, data?: unknown) {
+    private static log(level: LogLevel, message: string, data?: unknown, debugOnly?: boolean) {
         const timestamp = new Date().toISOString()
         let serializedData = ''
 
@@ -32,6 +32,7 @@ export default class Logger {
         }
         const line = `[${timestamp}] [${level}] ${message}` + (serializedData ? ` | ${serializedData}` : '') + '\n'
         console.log(line)
+        if(__DEV__ && debugOnly) return
         this.queue = this.queue.then(async () => {
             await this.init()
             await this.file.write(line, { append: true })
@@ -40,20 +41,20 @@ export default class Logger {
         })
     }
 
-    static debug(message: string, data?: unknown) {
-        this.log('debug', message, data)
+    static debug(message: string, data?: unknown, debugOnly?: boolean) {
+        this.log('debug', message, data, debugOnly)
     }
 
-    static info(message: string, data?: unknown) {
-        this.log('info', message, data)
+    static info(message: string, data?: unknown, debugOnly?: boolean) {
+        this.log('info', message, data, debugOnly)
     }
 
-    static warn(message: string, data?: unknown) {
-        this.log('warn', message, data)
+    static warn(message: string, data?: unknown, debugOnly?: boolean) {
+        this.log('warn', message, data, debugOnly)
     }
 
-    static error(message: string, error?: unknown) {
-        this.log('error', message, error)
+    static error(message: string, error?: unknown, debugOnly?: boolean) {
+        this.log('error', message, error, debugOnly)
     }
 
     static async flush() {

@@ -1,3 +1,4 @@
+import Logger from "@/shared/services/logger/Logger";
 import React, { createContext, useContext, useRef } from "react";
 
 const StartupContext = createContext<{
@@ -10,7 +11,7 @@ export function StartupProvider({ children, onReady }: { children: React.ReactNo
 
     const setPageAsReady = () => {
         if (isSplashHidden.current) return;
-        console.log("splash screen hidden")
+        Logger.info("StartupContext: Page is ready, hiding splash screen", null, true);
         isSplashHidden.current = true;
         onReady(); 
     };

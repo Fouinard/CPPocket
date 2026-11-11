@@ -1,10 +1,13 @@
 import { Calendar, Code, Gears } from "@getpapillon/papicons";
 import { Link, RelativePathString, usePathname } from "expo-router";
+import { StorageManager } from "@/shared/services/storage/storage";
 import { Pressable, Text, View } from "react-native";
+import { useEffect, useState } from "react";
 
 export default function BottomNavBar() {
-    const disabledPathnames = ["/startup", "/(options)/treeselector"];
+    const disabledPathnames = ["/startup", "/(options)/treeselector", "/viewers/MarkdownViewer"];
     const pathname = usePathname();
+    const [developerMode, setDeveloperMode] = useState(false);
     const navBar = [
         {
             icon: Calendar,
@@ -13,17 +16,27 @@ export default function BottomNavBar() {
         }, {
             icon: Gears,
             text: "Options",
-            open: ["/options", "/treeselector", "/editlogins"]
+            open: ["/options", "/treeselector", "/editlogins", "/about"]
         }, {
             icon: Code,
             text: "Dev",
             open: ["/dev"]
         }
-    ]
+    ];
+    useEffect(() => {
+        const checkDeveloperMode = async () => {
+            const isDevModeEnabled = await StorageManager.Default.get("developerMode");
+            setDeveloperMode(Boolean(isDevModeEnabled));
+        };
+        checkDeveloperMode();
+    }, [])
     return (
-        <View className="w-full flex-row justify-center items-center" style={{ display: disabledPathnames.includes(pathname) ? "none" : "flex"}}>
+        <View className="w-full flex-row justify-center items-center" style={{ display: disabledPathnames.includes(pathname) ? "none" : "flex" }}>
             <View className="flex-row w-4/5 justify-around p-2 bg-black rounded-[36px] absolute bottom-[4.5rem]">
                 {navBar.map((item, index) => {
+                    if (item.open.includes("/dev")) {
+                        if(!developerMode) return null;
+                    }
                     return (
                         <Link href={item.open[0] as RelativePathString} key={index} asChild>
                             <Pressable className={`flex-1 flex-col items-center rounded-[28px] pt-2 pb-1 ${item.open.includes(pathname) ? "bg-gray-700" : ""}`}>
@@ -37,5 +50,5 @@ export default function BottomNavBar() {
                 })}
             </View>
         </View>
-    )
+    );
 }

@@ -1,7 +1,7 @@
 import BottomNavBar from "@/shared/components/BottomNavBar";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
 import { StorageManager } from "@/shared/services/storage/storage";
-import Logger from "@/shared/services/logger/logger"
+import Logger from "@/shared/services/logger/Logger"
 import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

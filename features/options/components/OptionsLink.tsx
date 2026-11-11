@@ -6,6 +6,7 @@ interface OptionsLinkProps {
     mainText: string,
     icon?: React.ReactNode,
     description?: string
+    onPress?: () => void
 }
 
 export default function OptionsLink(props: OptionsLinkProps) {
@@ -14,7 +15,7 @@ export default function OptionsLink(props: OptionsLinkProps) {
 
     return (
         <View>
-            <Link href={props.href} asChild>
+            <Link href={props.href} asChild onPress={props.onPress}>
                 <Pressable android_ripple={{ color: "#434147", }} onPress={() => router.push(props.href as any)} className="overflow-hidden p-5">
                     <View className="flex flex-row items-center gap-4">
                         {props.icon}
