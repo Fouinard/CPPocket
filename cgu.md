@@ -22,7 +22,6 @@ CPPocket est développée et exploitée par :
 
 Les éditeurs exercent actuellement leur activité à titre personnel et ne constituent pas, à la date de publication des présentes, une société, une association ou une autre personne morale.
 
-**Adresse :** 30 avenue de Valence, 38360 Sassenage, France  
 **Adresse électronique :** [contact@fouinard.fr](mailto:contact@fouinard.fr)
 
 ## 3. Absence d’affiliation institutionnelle
@@ -317,8 +316,7 @@ La version applicable est celle acceptée par l’Utilisateur et affichée dans 
 
 Pour toute question concernant CPPocket, les présentes CGU, un problème de sécurité ou un signalement, l’Utilisateur peut contacter les Éditeurs :
 
-**E-mail :** [contact@fouinard.fr](mailto:contact@fouinard.fr)  
-**Adresse :** 30 avenue de Valence, 38360 Sassenage, France
+**E-mail :** [contact@fouinard.fr](mailto:contact@fouinard.fr)
 
 ## 22. Droit applicable et règlement des litiges
 
