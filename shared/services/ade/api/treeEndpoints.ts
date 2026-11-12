@@ -1,9 +1,11 @@
+import Logger from "../../logger/Logger";
 import { ADESessionParams } from "../types/session.types";
 import { TreeExpandParams, TreeRequestParams, TreeRequestResponse } from "../types/tree.types";
 import { buildBaseUrl } from "./constants";
 
 export async function expandTreeNode(params: TreeExpandParams): Promise<TreeRequestResponse> {
 
+    Logger.info(`Expanding ${params.nodeType} (id = ${params.nodeId})`);
     const baseUrl = buildBaseUrl(params);
     const key = params.nodeType === "category" ? "category" : "branchId";
     let step = `${key}=${params.nodeId}&expand=false&forceLoad=false&reload=false&scroll=0`
@@ -24,7 +26,7 @@ export async function expandTreeNode(params: TreeExpandParams): Promise<TreeRequ
     );
 
     if (!response.ok) {
-        throw new Error(`Failed to expand ${params.nodeType} (id = ${params.nodeId}): ${response.statusText}`);
+        Logger.error(`Failed to expand ${params.nodeType} (id = ${params.nodeId}): ${response.statusText}`);
     }
 
     const buffer = await response.arrayBuffer();
@@ -33,9 +35,9 @@ export async function expandTreeNode(params: TreeExpandParams): Promise<TreeRequ
 }
 
 export async function selectTreeNode(params: TreeRequestParams): Promise<TreeRequestResponse> {
+    Logger.info(`Selecting node (id = ${params.nodeId})`);
     const baseUrl = buildBaseUrl(params);
     let step = `selectId=${params.nodeId}&reset=false&forceLoad=false&scroll=0`
-
 
     const response = await fetch(
         `${baseUrl}/jsp/standard/gui/tree.jsp?${step}`,
@@ -54,7 +56,7 @@ export async function selectTreeNode(params: TreeRequestParams): Promise<TreeReq
     );
 
     if (!response.ok) {
-        throw new Error(`Failed to select node (id = ${params.nodeId}): ${response.statusText}`);
+        Logger.error(`Failed to select node (id = ${params.nodeId}): ${response.statusText}`);
     }
 
     const buffer = await response.arrayBuffer();
@@ -63,6 +65,7 @@ export async function selectTreeNode(params: TreeRequestParams): Promise<TreeReq
 }
 
 export async function fetchTreeRootEndpoint(params: ADESessionParams): Promise<TreeRequestResponse> {
+    Logger.info(`Fetching tree root endpoint`);
     const baseUrl = buildBaseUrl(params);
 
     const response = await fetch(
@@ -81,7 +84,7 @@ export async function fetchTreeRootEndpoint(params: ADESessionParams): Promise<T
     );
 
     if (!response.ok) {
-        throw new Error(`Failed to fetch tree root: ${response.statusText}`);
+        Logger.error(`Failed to fetch tree root: ${response.statusText}`);
     }
 
     const buffer = await response.arrayBuffer();

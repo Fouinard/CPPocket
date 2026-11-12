@@ -3,10 +3,12 @@ import { TreeConfirmationModal } from '@/features/tree/components/TreeConfirmati
 import { TreeNodeRow } from '@/features/tree/components/TreeNodeRow';
 import { useClassTree } from '@/features/tree/hooks/useClassTree';
 import { ParsedTreeNode } from '@/features/tree/types';
+import Logger from '@/shared/services/logger/Logger';
 import { useCallback } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 export default function ADETreeScreen() {
+    Logger.info("Rendering ADETreeScreen");
     const {
         visibleNodes,
         expandedNodeIds,

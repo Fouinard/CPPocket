@@ -1,5 +1,5 @@
-// import { formatTime, getDurationFormatted } from "@/utils/Time";
 import { ParsedLesson } from "@/features/schedule/types";
+import Logger from "@/shared/services/logger/Logger";
 import { formatDateKey, formatTime } from "@/shared/utils/Time";
 import { router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
@@ -11,7 +11,7 @@ interface MultipleLessonsData {
 }
 
 export default function ({ startDate, endDate }: MultipleLessonsData) {
-
+    Logger.info("Rendering MultipleLessons component", { startDate, endDate });
     return (
         <Pressable className="w-full h-32" onPress={() => {
             router.push({

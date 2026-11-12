@@ -8,6 +8,7 @@ import Logger from "@/shared/services/logger/Logger";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function () {
+    Logger.info("\n\nNavigated to Markdown Viewer Screen\n\n");
     const { markdownUrl } = useLocalSearchParams<{ markdownUrl: string }>();
 
     const [markdown, setMarkdown] = useState("");
@@ -16,7 +17,7 @@ export default function () {
         fetch(markdownUrl)
             .then((res) => res.text())
             .then((text) => setMarkdown(text))
-            .catch((err) => console.error(err));
+            .catch((err) => Logger.error("Error fetching markdown", err));
     }, [markdownUrl]);
 
     return (
@@ -34,7 +35,10 @@ export default function () {
                 }
                 <Markdown
                     markdown={markdown}
-                    onLinkPress={(url) => Linking.openURL(url)}
+                    onLinkPress={(url) => {
+                        Logger.info("Opening external link from markdown: " + url);
+                        Linking.openURL(url)
+                    }}
                 />
             </ScrollView>
         </SafeAreaView>

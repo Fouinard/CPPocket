@@ -1,10 +1,11 @@
 import { StorageManager } from '@/shared/services/storage/storage';
 import { CookieDict, findCookie } from '@/shared/utils/cookies';
-import { ExpandableNodeTypes } from '../../../../features/tree/types';
 import { ADE_DEFAULTS } from '../api/constants';
 import { createSession, valiateSession } from '../api/sessionEndpoints';
 import { expandTreeNode, selectTreeNode } from '../api/treeEndpoints';
 import { ADESessionParams } from '../types/session.types';
+import Logger from '../../logger/Logger';
+
 
 export class SessionManager {
     private static instance: SessionManager | null = null;
@@ -23,6 +24,7 @@ export class SessionManager {
     }
 
     public async login(): Promise<void> {
+        Logger.info("Logging in to ADE");
         if (this.loginPromise) {
             return this.loginPromise;
         }
@@ -50,14 +52,17 @@ export class SessionManager {
     public async getFormattedCredentials(): Promise<string> {
         const password = await StorageManager.Secure.get("password");
         const username = await StorageManager.Secure.get("username");
+        Logger.info("Getting formatted credentials");
         return btoa(`${username}:${password}`);
     }
 
     public getSessionCookies() {
+        Logger.info("Getting session cookies");
         return Object.entries(this.cookies).map(([name, cookie]) => `${cookie.value}`).join("; ");
     }
 
     public async createSession(credentials: { username: string, password: string }) {
+        Logger.info("Creating ADE session");
         const creds = btoa(`${credentials.username}:${credentials.password}`);
         try {
             this.cookies = { ...this.cookies, ...await createSession({ credentials: creds }) };
@@ -73,6 +78,7 @@ export class SessionManager {
     }
 
     public async selectClass(nodeListOverride?: string[][]) {
+        Logger.info("Selecting class in ADE");
         const creds = await this.getFormattedCredentials();
 
         const nodeList = nodeListOverride || await StorageManager.Default.get<string[][]>("ADEClassTreeList");
@@ -86,16 +92,18 @@ export class SessionManager {
             if (treeNode[0] == "select") {
                 referer = (await selectTreeNode({ credentials: creds, nodeId: treeNode[1], cookieString: this.getSessionCookies(), referer: referer })).currentUrl;
             } else {
-                referer = (await expandTreeNode({ credentials: creds, nodeType: treeNode[0] as ExpandableNodeTypes, nodeId: treeNode[1], cookieString: this.getSessionCookies(), referer: referer })).currentUrl;
+                referer = (await expandTreeNode({ credentials: creds, nodeType: treeNode[0] as any, nodeId: treeNode[1], cookieString: this.getSessionCookies(), referer: referer })).currentUrl;
             }
         }
     }
 
     public clearSession() {
+        Logger.info("Clearing ADE session");
         this.cookies = {};
     }
 
     public async generateFreshSession() {
+        Logger.info("Generating fresh ADE session");
         this.clearSession();
         await this.login();
     }
@@ -108,21 +116,19 @@ export class SessionManager {
         apiFunction: F,
         ...[extraParams]: keyof ExtraParams extends never ? [] : [params: ExtraParams]
     ): Promise<T> {
+        Logger.info(`Making authenticated request to ${apiFunction.name}`);
         if (!findCookie(this.cookies, "jsessionid")) {
             this.clearSession();
             await this.login();
         }
 
         try {
-            // console.log("authenticated request");
             return await apiFunction({
                 credentials: await this.getFormattedCredentials(),
                 cookieString: this.getSessionCookies(),
                 ...(extraParams as any),
             });
         } catch (error) {
-            // console.log(error);
-            // console.log("failed authenticated request, retrying...");
 
             this.clearSession();
             await this.login();

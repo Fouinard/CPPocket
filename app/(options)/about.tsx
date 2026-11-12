@@ -5,8 +5,10 @@ import Toast from "react-native-toast-message";
 import { useEffect, useRef, useState } from "react";
 import { StorageManager } from "@/shared/services/storage/storage";
 import * as Updates from "expo-updates";
+import Logger from "@/shared/services/logger/Logger";
 
 export default function () {
+    Logger.info("\n\nNavigated to About Screen\n\n");
     const [developerMode, setDeveloperMode] = useState(false);
     const clickCount = useRef(0);
     const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -28,6 +30,7 @@ export default function () {
             });
         }
         if (clickCount.current >= 10) {
+            Logger.info("\n\nDeveloper mode activated\n\n");
             setDeveloperMode(true);
             clickCount.current = 0;
             Toast.show({
@@ -54,6 +57,7 @@ export default function () {
             <Text className="text-text text-lg font-normal px-5">
                 Cette application a été développée par des étudiants de l'INP Grenoble pour faciliter l'accès aux informations de l'école.
                 Elle est open-source et disponible sur <Text className="text-accent" onPress={() => {
+                    Logger.info("Opening GitHub repository");
                     Linking.openURL("https://github.com/fouinard/cppocket")
                 }}>GitHub</Text>.
             </Text>
@@ -65,6 +69,7 @@ export default function () {
             <Text className="text-text text-lg font-normal px-5 mt-4">
                 Pour toute question ou suggestion, veuillez nous contacter à l'adresse <Text
                     className="text-accent" onPress={() => {
+                        Logger.info("Opening mailto:contact@fouinard.fr");
                         Linking.openURL("mailto:contact@fouinard.fr");
                     }}>
                     contact@fouinard.fr
