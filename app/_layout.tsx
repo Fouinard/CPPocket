@@ -1,10 +1,11 @@
 import BottomNavBar from "@/shared/components/BottomNavBar";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
+import Logger from "@/shared/services/logger/Logger";
 import { StorageManager } from "@/shared/services/storage/storage";
-import Logger from "@/shared/services/logger/Logger"
+import { queryClient } from "@/shared/utils/queryClient";
 import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from 'expo-font';
 import { Redirect, RelativePathString, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -50,14 +51,6 @@ export default function RootLayout() {
     if (!dbReady || !fontLoaded || !initialRoute) {
         return null;
     }
-
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                staleTime: 15 * 60 * 1000,
-            },
-        },
-    });
 
     return (
         <StartupProvider onReady={() => SplashScreen.hideAsync()}>

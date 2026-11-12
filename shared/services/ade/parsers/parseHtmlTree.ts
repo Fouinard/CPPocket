@@ -64,7 +64,7 @@ export default function parseHtmlTree(html: string): Record<string, ParsedTreeNo
         }
 
         levelParentStack.length = level;
-        const parentId = level > 0 ? levelParentStack[level - 1] : '__root';
+        const parentId = level > 0 ? levelParentStack[level - 1] : null;
 
         if (type === 'category' || type === 'branch') {
             levelParentStack[level] = nodeId;

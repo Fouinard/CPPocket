@@ -10,7 +10,6 @@ export default function useScheduleDay(date: Date) {
         queryKey: ['schedule-day', dateKey],
         queryFn: () => ADEApi.Schedule.getIcal(date),
         select: (lessons: ParsedLesson[]): ScheduleDayData => {return {date, periods: parseLessonsToPeriods(lessons)}},
-        gcTime: 1000 * 60 * 60 * 24,
     });
 
     return {

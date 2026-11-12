@@ -20,7 +20,7 @@ export interface ParsedTreeNode {
   isExpanded: boolean;
   isSelectable: boolean;
   isSelected: boolean;
-  parentId: string | "__root";
+  parentId: string | null;
   childrenIds: string[];
 
   selectionState: TreeNodeSelectionState;
