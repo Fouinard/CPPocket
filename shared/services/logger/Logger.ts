@@ -2,11 +2,15 @@ import { Directory, File, Paths } from 'expo-file-system'
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
+type LogListener = () => void
+
 export default class Logger {
     private static directory = new Directory(Paths.document, 'logs')
     private static file = new File(Logger.directory, 'application.log')
     private static queue: Promise<void> = Promise.resolve()
     private static initialized = false
+    private static listeners = new Set<LogListener>()
+
 
     private static async init() {
         if (this.initialized) return
@@ -19,7 +23,26 @@ export default class Logger {
         this.initialized = true
     }
 
-    private static log(level: LogLevel, message: string, data?: unknown, debugOnly?: boolean) {
+
+    static subscribe(listener: LogListener) {
+        this.listeners.add(listener)
+        return () => {
+            this.listeners.delete(listener)
+        }
+    }
+
+    private static notify() {
+        this.listeners.forEach(listener => {
+            try {
+                listener()
+            } catch (error) {
+                console.error('Logger listener error:', error)
+            }
+        })
+    }
+
+
+    private static log(level: LogLevel, message: string, data?: unknown, debugOnly: boolean = false) {
         const timestamp = new Date().toISOString()
         let serializedData = ''
 
@@ -36,6 +59,7 @@ export default class Logger {
         this.queue = this.queue.then(async () => {
             await this.init()
             await this.file.write(line, { append: true })
+            this.notify()
         }).catch(error => {
             console.error('Logger write error:', error)
         })
