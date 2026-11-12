@@ -6,7 +6,7 @@ import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from 'expo-font';
-import { Redirect, RelativePathString, Stack } from "expo-router"; // Import de Slot
+import { Redirect, RelativePathString, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -35,9 +35,8 @@ export default function RootLayout() {
                 } else {
                     setInitialRoute("/schedule/schedule");
                 }
-                Logger.info("Initial route set", { route: initialRoute });
+                Logger.info("Route de chargement définir sur : ", initialRoute);
             } catch (error) {
-                console.error(error);
                 setInitialRoute("startup");
                 Logger.error("Error in prepareApp", error);
             } finally {

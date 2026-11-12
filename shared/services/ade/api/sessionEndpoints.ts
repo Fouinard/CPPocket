@@ -1,8 +1,10 @@
 import { CookieDict, findCookie, getCookies } from "@/shared/utils/cookies";
 import { ADEAuthenticatedParams, ADESessionParams } from "../types/session.types";
 import { ADE_DEFAULTS, buildBaseUrl } from "./constants";
+import Logger from "../../logger/Logger";
 
 export async function createSession(params: ADEAuthenticatedParams): Promise<CookieDict> {
+    Logger.info(`Creating ADE session`);
     const baseUrl = buildBaseUrl(params);
     const response = await fetch(
         `${baseUrl}/jsp/standard/direct_planning.jsp`,
@@ -21,14 +23,14 @@ export async function createSession(params: ADEAuthenticatedParams): Promise<Coo
     const bigipserver = findCookie(cookies, "bigipserver")?.value;
 
     if (!jsessionid) {
-        throw new Error(`Failed to create session: jsessionid: ${jsessionid}; bigipserver: ${bigipserver}`);
+        Logger.error(`Failed to create session: jsessionid: ${jsessionid}; bigipserver: ${bigipserver}`);
     }
 
     return cookies;
 }
 
-
 export async function valiateSession(params: ADESessionParams): Promise<CookieDict> {
+    Logger.info(`Validating ADE session`);
     const baseUrl = buildBaseUrl(params);
     const response = await fetch(
         `${baseUrl}/jsp/custom/modules/plannings/direct_planning.jsp`,
@@ -45,14 +47,14 @@ export async function valiateSession(params: ADESessionParams): Promise<CookieDi
     );
 
     if (!response.ok) {
-        throw new Error(`Failed to validate session: ${response.statusText}`);
+        Logger.error(`Failed to validate session: ${response.statusText}`);
     }
 
     const fetchedCookies = getCookies(response);
     const acceswebcookie = findCookie(fetchedCookies, "accesweb")?.value;
 
     if (!acceswebcookie) {
-        throw new Error(`Failed to validate session: acceswebcookie: ${acceswebcookie}; jsessionid: ${params.cookieString}`);
+        Logger.error(`Failed to validate session: acceswebcookie: ${acceswebcookie}; jsessionid: ${params.cookieString}`);
     }
 
     return fetchedCookies;

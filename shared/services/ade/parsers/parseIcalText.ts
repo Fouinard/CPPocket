@@ -1,7 +1,9 @@
 import ICAL from "ical.js";
 import { Lesson } from "../types/schedule.types";
+import Logger from "../../logger/Logger";
 
 export default function parseIcalText(icsText: string): Lesson[] {
+    Logger.info("Parsing iCal text", icsText);
     const jcal = ICAL.parse(icsText);
     const calendar = new ICAL.Component(jcal);
     return calendar.getAllSubcomponents("vevent").map(component => {

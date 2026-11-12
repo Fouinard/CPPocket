@@ -1,7 +1,9 @@
 import { NodeType, ParsedTreeNode, TreeNodeSelectionState } from '@/features/tree/types';
 import { parse } from 'node-html-parser';
+import Logger from '../../logger/Logger';
 
 export default function parseHtmlTree(html: string): Record<string, ParsedTreeNode> {
+    Logger.debug("Parsing HTML tree", { html });
     const root = parse(html);
     const nodesMap: Record<string, ParsedTreeNode> = {};
     const treeLines = root.querySelectorAll('div.treeline, div.treelineselected');
@@ -87,12 +89,12 @@ export default function parseHtmlTree(html: string): Record<string, ParsedTreeNo
         if (parentId && nodesMap[parentId]) {
             if (!nodesMap[parentId]?.childrenIds.includes(nodeId)) {
                 nodesMap[parentId]?.childrenIds.push(nodeId);
-                console.log(nodeId, "added to", parentId);
+                Logger.debug(`Added node ${nodeId} to parent ${parentId}`, null, true);
             }
         }
     }
 
-    console.log("nodesMap parse", nodesMap);
+    Logger.debug("Parsed tree nodes", nodesMap, true);
 
     return nodesMap;
 }

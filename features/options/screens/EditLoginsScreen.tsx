@@ -1,4 +1,5 @@
 import { ADEApi } from "@/shared/services/ade/adeApi";
+import Logger from "@/shared/services/logger/Logger";
 import { StorageManager } from "@/shared/services/storage/storage";
 import colors from "@/styles/colors";
 import { router } from "expo-router";
@@ -24,6 +25,7 @@ export function EditLoginsScreen() {
     }, [])
 
     const saveCredentials = async () => {
+        Logger.info("Saving credentials");
         const storedPassword = await StorageManager.Secure.get("password")
         const credentials = {
             username: username || "",
@@ -34,6 +36,7 @@ export function EditLoginsScreen() {
         try {
             await ADEApi.Auth.createSession(credentials)
         } catch (error) {
+            Logger.error("Failed to save credentials, identifiants invalides", error);
             Toast.show({
                 type: "error",
                 text2: "Identifiants invalides !",

@@ -4,9 +4,11 @@ import { SchedulePeriod } from "../types";
 import Break from "./Break";
 import { Lesson } from "./Lesson";
 import MultipleLessons from "./MultipleLessons";
+import Logger from "@/shared/services/logger/Logger";
 
 export default function ScheduleDay({ date }: { date: Date }) {
     const { data, isLoading } = useSchedule(date);
+    Logger.info("Rendering ScheduleDay component", { date, data });
 
     return (
         <View key={`schedule-day-${date.toISOString()}`}>

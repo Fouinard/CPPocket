@@ -3,6 +3,7 @@ import { Link, router } from "expo-router";
 import { Pressable, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as Updates from "expo-updates";
+import Logger from "@/shared/services/logger/Logger";
 
 export default function () {
     return (
@@ -19,7 +20,20 @@ export default function () {
             <Link href="/(options)/treeselector">
                 <Text className="text-text">Afficher le selecteur de classe</Text>
             </Link>
+            <Link href="/logs">
+                <Text className="text-text">Afficher les logs</Text>
+            </Link>
             <Pressable onPress={async () => {
+                Logger.deleteAllLogs();
+                Toast.show({
+                    type: "success",
+                    text1: "Logs supprimés"
+                })
+            }}>
+                <Text className="text-text">Supprimer tous ses logs</Text>
+            </Pressable>
+            <Pressable onPress={async () => {
+                Logger.info("Logging out user and clearing credentials");
                 await StorageManager.Secure.remove("username");
                 await StorageManager.Secure.remove("password");
                 router.replace("/startup");
@@ -27,6 +41,7 @@ export default function () {
                 <Text className="text-text">Se déconnecter</Text>
             </Pressable>
             <Pressable onPress={async () => {
+                Logger.info("Clearing class selection");
                 await StorageManager.Default.remove("ADEClassTreeList");
                 Toast.show({
                     type: "success",
@@ -36,6 +51,7 @@ export default function () {
                 <Text className="text-text">Retirer la selection de sa classe</Text>
             </Pressable>
             <Pressable onPress={async () => {
+                Logger.info("Performing a fresh start: clearing class selection and credentials");
                 await StorageManager.Default.remove("ADEClassTreeList");
                 await StorageManager.Secure.remove("username");
                 await StorageManager.Secure.remove("password");
@@ -45,6 +61,7 @@ export default function () {
             </Pressable>
 
             <Pressable onPress={async () => {
+                Logger.info("\n\nDisabling developer mode\n\n");
                 await StorageManager.Default.set("developerMode", "false");
                 Updates.reloadAsync()
             }}>

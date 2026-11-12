@@ -20,7 +20,6 @@ interface LessonProps {
 }
 
 export function Lesson(props: LessonProps) {
-
     const [hue] = useState(() => getHueFromString(props.lessonData.subject));
     const [duration] = useState(() => getDurationFormatted(props.lessonData.startDate, props.lessonData.endDate));
 

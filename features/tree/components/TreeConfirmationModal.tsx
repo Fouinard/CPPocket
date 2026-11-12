@@ -1,4 +1,5 @@
 import { ParsedTreeNode } from '@/features/tree/types';
+import Logger from '@/shared/services/logger/Logger';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function TreeConfirmationModal({ visible, pendingNode, onCancel, onConfirm }: Props) {
+    Logger.info("Rendering TreeConfirmationModal", { visible, pendingNode });
     return (
         <Modal
             transparent

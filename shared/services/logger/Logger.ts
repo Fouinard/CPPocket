@@ -64,4 +64,14 @@ export default class Logger {
     static getFileUri() {
         return this.file.uri
     }
+
+    static async getLogsContent() {
+        await this.init()
+        return await this.file.text()
+    }
+
+    static async deleteAllLogs() {
+        await this.file.write('', { append: false })
+        this.info('All logs deleted', null)
+    }
 }

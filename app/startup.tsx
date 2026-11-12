@@ -2,6 +2,7 @@ import EyeIcon from "@/assets/icons/eyeicon.svg";
 import { useStartupContext } from "@/shared/components/contexts/StartupContext";
 import { ADEApi } from "@/shared/services/ade/adeApi";
 import { SessionManager } from "@/shared/services/ade/session/SessionManager";
+import Logger from "@/shared/services/logger/Logger";
 import { StorageManager } from "@/shared/services/storage/storage";
 import colors from "@/styles/colors";
 import { Checkbox } from "expo-checkbox";
@@ -11,6 +12,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function () {
+    Logger.info("\n\nNavigated to Startup Screen\n\n");
     const router = useRouter();
     const [privacyChecked, setPrivacyChecked] = useState(false);
     const [termsChecked, setTermsChecked] = useState(false);
@@ -53,7 +55,10 @@ export default function () {
                             secureTextEntry={hiddenPassword}
                         />
                         <Pressable
-                            onPress={() => setHiddenPassword(!hiddenPassword)}
+                            onPress={() => {
+                                Logger.info("Toggled password visibility: ", !hiddenPassword);
+                                setHiddenPassword(!hiddenPassword)
+                            }}
                             className="justify-center items-center ml-2"
                         >
                             <EyeIcon stroke={"white"} />
@@ -61,7 +66,10 @@ export default function () {
                     </View>
                 </View>
                 <Pressable
-                    onPress={() => setTermsChecked(!termsChecked)}
+                    onPress={() => {
+                        Logger.info("Toggled terms: ", !termsChecked);
+                        setTermsChecked(!termsChecked)
+                    }}
                     className="flex-row items-center gap-3 mt-5"
                 >
                     <Checkbox
@@ -84,7 +92,10 @@ export default function () {
                     </Text>
                 </Pressable>
                 <Pressable
-                    onPress={() => setPrivacyChecked(!privacyChecked)}
+                    onPress={() => {
+                        Logger.info("Toggled privacy: ", !privacyChecked);
+                        setPrivacyChecked(!privacyChecked);
+                    }}
                     className="flex-row items-center gap-3"
                 >
                     <Checkbox
@@ -108,7 +119,9 @@ export default function () {
                 </Pressable>
             </View>
             <Pressable className="mt-10 p-2 border border-text rounded-md w-1/2 self-center" onPress={async () => {
+                Logger.info("Attempting to log in with username: ", username);
                 if (!termsChecked) {
+                    Logger.warn("User attempted to log in without accepting terms.");
                     return Toast.show({
                         type: 'error',
                         text2: 'Vous devez accepter les conditions d\'utilisation pour continuer.',
@@ -116,6 +129,7 @@ export default function () {
                     });
                 }
                 if (!privacyChecked) {
+                    Logger.warn("User attempted to log in without accepting privacy policy.");
                     return Toast.show({
                         type: 'error',
                         text2: 'Vous devez accepter la politique de confidentialité pour continuer.',
@@ -125,7 +139,9 @@ export default function () {
                 Toast.hide();
                 try {
                     await ADEApi.Auth.createSession({ username, password });
+                    Logger.info("User logged in successfully: ", username);
                 } catch (error) {
+                    Logger.error("Login failed for user: " + username, error);
                     Toast.show({
                         type: 'error',
                         text2: `Identifiants invalides !`,
@@ -133,6 +149,7 @@ export default function () {
                     });
                     return;
                 }
+                Logger.info("Storing credentials securely for user: ", username);
                 await StorageManager.Secure.set('username', username);
                 await StorageManager.Secure.set('password', password);
                 Toast.show({
@@ -142,10 +159,12 @@ export default function () {
                 });
                 const hasClassSelected = await StorageManager.Default.get<string[][]>('ADEClassTreeList');
                 if (!hasClassSelected) {
-                    await StorageManager.Secure.remove('ADEClassTreeList');
+                    Logger.info("No class selected, redirecting to class selector.");
+                    await StorageManager.Default.remove('ADEClassTreeList');
                     router.push("/treeselector");
                     return;
                 } else {
+                    Logger.info("Class already selected, proceeding to schedule.");
                     await SessionManager.getInstance().selectClass(hasClassSelected);
                     router.push("/schedule/schedule");
                 }

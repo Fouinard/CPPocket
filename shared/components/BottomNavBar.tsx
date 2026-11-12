@@ -3,9 +3,11 @@ import { Link, RelativePathString, usePathname } from "expo-router";
 import { StorageManager } from "@/shared/services/storage/storage";
 import { Pressable, Text, View } from "react-native";
 import { useEffect, useState } from "react";
+import Logger from "../services/logger/Logger";
 
 export default function BottomNavBar() {
-    const disabledPathnames = ["/startup", "/(options)/treeselector", "/viewers/MarkdownViewer"];
+    Logger.info("Rendering BottomNavBar");
+    const disabledPathnames = ["/startup", "/(options)/treeselector", "/viewers/MarkdownViewer", "/logs"];
     const pathname = usePathname();
     const [developerMode, setDeveloperMode] = useState(false);
     const navBar = [
@@ -26,6 +28,7 @@ export default function BottomNavBar() {
     useEffect(() => {
         const checkDeveloperMode = async () => {
             const isDevModeEnabled = await StorageManager.Default.get("developerMode");
+            Logger.info("Checking developer mode in BottomNavBar", isDevModeEnabled);
             setDeveloperMode(Boolean(isDevModeEnabled));
         };
         checkDeveloperMode();
