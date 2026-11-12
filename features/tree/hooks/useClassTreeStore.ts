@@ -1,6 +1,7 @@
 // src/features/tree/store/useClassTreeStore.ts
 import { ADEApi } from '@/shared/services/ade/adeApi';
 import { StorageManager } from '@/shared/services/storage/storage';
+import { queryClient } from '@/shared/utils/queryClient';
 import { create } from 'zustand';
 import { ParsedTreeNode, TreeNodeSelectionState } from '../types';
 import { getADEPathList } from '../utils/nodes';
@@ -27,7 +28,7 @@ export const useClassTreeStore = create<ClassTreeState>((set, get) => ({
 
     loadInitialTree: async () => {
         try {
-            set({ loadingNodeId: 'root' });
+            set({ loadingNodeId: null });
             const nodesMap = await ADEApi.Tree.fetchTreeRoot();
 
             const newExpanded = new Set<string>();
@@ -79,20 +80,13 @@ export const useClassTreeStore = create<ClassTreeState>((set, get) => ({
                     if (mergedMap[id]) {
                         mergedMap[id] = {
                             ...newNode,
-                            childrenIds: mergedMap[id].childrenIds,
+                            childrenIds: updatedMap[id].childrenIds,
                             selectionState: mergedMap[id].selectionState,
                             isExpanded: nodeId === id ? updatedMap[id].isExpanded : mergedMap[id].isExpanded,
                         };
                     } else {
                         mergedMap[id] = newNode;
                     }
-                }
-
-                const parentNode = mergedMap[nodeId];
-                if (parentNode) {
-                    parentNode.childrenIds = Object.values(mergedMap)
-                        .filter(n => n.parentId === nodeId)
-                        .map(n => n.id);
                 }
 
                 return {
@@ -117,6 +111,8 @@ export const useClassTreeStore = create<ClassTreeState>((set, get) => ({
 
             const pathList = getADEPathList(targetNode.id, nodesMap);
             await StorageManager.Default.set("ADEClassTreeList", pathList);
+
+            queryClient.removeQueries({ queryKey: ["schedule-day"] });
 
             set(state => {
                 const updatedMap = { ...state.nodesMap };
@@ -153,7 +149,7 @@ export const useClassTreeStore = create<ClassTreeState>((set, get) => ({
             }
         };
 
-        const rootNodes = Object.values(nodesMap).filter(n => n.parentId === "__root");
+        const rootNodes = Object.values(nodesMap).filter(n => n.parentId === null);
 
         for (const root of rootNodes) {
             traverse(root.id);
