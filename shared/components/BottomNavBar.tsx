@@ -18,7 +18,7 @@ export default function BottomNavBar() {
         }, {
             icon: Gears,
             text: "Options",
-            open: ["/options", "/treeselector", "/editlogins", "/about"]
+            open: ["/options", "/treeselector", "/editlogins", "/about", "/logsmanaging"]
         }, {
             icon: Code,
             text: "Dev",

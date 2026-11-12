@@ -1,4 +1,4 @@
-import { File, Directory, Paths } from 'expo-file-system'
+import { Directory, File, Paths } from 'expo-file-system'
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
@@ -32,7 +32,7 @@ export default class Logger {
         }
         const line = `[${timestamp}] [${level}] ${message}` + (serializedData ? ` | ${serializedData}` : '') + '\n'
         console.log(line)
-        if(__DEV__ && debugOnly) return
+        if (__DEV__ && debugOnly) return
         this.queue = this.queue.then(async () => {
             await this.init()
             await this.file.write(line, { append: true })
@@ -73,5 +73,9 @@ export default class Logger {
     static async deleteAllLogs() {
         await this.file.write('', { append: false })
         this.info('All logs deleted', null)
+    }
+
+    static getLogFileSize() {
+        return this.file.size
     }
 }
