@@ -1,0 +1,61 @@
+import { CookieDict, findCookie, getCookies } from "@/shared/utils/cookies";
+import { ADEAuthenticatedParams, ADESessionParams } from "../types/session.types";
+import { ADE_DEFAULTS, buildBaseUrl } from "./constants";
+import Logger from "../../logger/Logger";
+
+export async function createSession(params: ADEAuthenticatedParams): Promise<CookieDict> {
+    Logger.info(`Creating ADE session`);
+    const baseUrl = buildBaseUrl(params);
+    const response = await fetch(
+        `${baseUrl}/jsp/standard/direct_planning.jsp`,
+        {
+            method: "GET",
+            headers: {
+                Authorization: "Basic " + params.credentials,
+                Referer: `https://${ADE_DEFAULTS.endpoint}/`,
+            },
+            credentials: "omit"
+        }
+    );
+
+    const cookies = getCookies(response);
+    const jsessionid = findCookie(cookies, "jsession")?.value;
+    const bigipserver = findCookie(cookies, "bigipserver")?.value;
+
+    if (!jsessionid) {
+        Logger.error(`Failed to create session: jsessionid: ${jsessionid}; bigipserver: ${bigipserver}`);
+    }
+
+    return cookies;
+}
+
+export async function valiateSession(params: ADESessionParams): Promise<CookieDict> {
+    Logger.info(`Validating ADE session`);
+    const baseUrl = buildBaseUrl(params);
+    const response = await fetch(
+        `${baseUrl}/jsp/custom/modules/plannings/direct_planning.jsp`,
+        {
+            headers: {
+                "Authorization": "Basic " + params.credentials,
+                "Referer": `${baseUrl}/jsp/standard/direct_planning.jsp`,
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Cookie": params.cookieString
+            },
+            method: "POST",
+            credentials: "omit"
+        }
+    );
+
+    if (!response.ok) {
+        Logger.error(`Failed to validate session: ${response.statusText}`);
+    }
+
+    const fetchedCookies = getCookies(response);
+    const acceswebcookie = findCookie(fetchedCookies, "accesweb")?.value;
+
+    if (!acceswebcookie) {
+        Logger.error(`Failed to validate session: acceswebcookie: ${acceswebcookie}; jsessionid: ${params.cookieString}`);
+    }
+
+    return fetchedCookies;
+}

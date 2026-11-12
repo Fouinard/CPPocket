@@ -1,24 +1,18 @@
 {
   "expo": {
-    "name": "INP-Bridge",
-    "slug": "INP-Bridge",
+    "name": "CPPocket",
+    "slug": "CPPocket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "inpbridge",
+    "scheme": "cppocket",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
       "predictiveBackGestureEnabled": false,
-      "package": "com.fouinard.INPBridge"
+      "package": "com.fouinard.cppocket"
     },
     "web": {
       "output": "static",
@@ -41,7 +35,22 @@
       ],
       "expo-secure-store",
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      "expo-image",
+      [
+        "expo-file-system",
+        {
+          "isDocumentDirectoryExternalStorage": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "cmakeVersion": "3.31.6"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

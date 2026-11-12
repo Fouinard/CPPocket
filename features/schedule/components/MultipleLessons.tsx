@@ -1,0 +1,36 @@
+import { ParsedLesson } from "@/features/schedule/types";
+import Logger from "@/shared/services/logger/Logger";
+import { formatDateKey, formatTime } from "@/shared/utils/Time";
+import { router } from "expo-router";
+import { Pressable, Text, View } from "react-native";
+
+interface MultipleLessonsData {
+    startDate: Date,
+    endDate: Date,
+    lessons: ParsedLesson[]
+}
+
+export default function ({ startDate, endDate }: MultipleLessonsData) {
+    Logger.info("Rendering MultipleLessons component", { startDate, endDate });
+    return (
+        <Pressable className="w-full h-32" onPress={() => {
+            router.push({
+                pathname: "/schedule/multiplelessons",
+                params: { dateKey:formatDateKey(startDate), startTime: startDate.getTime() }
+            });
+        }}>
+            <View className="flex flex-row w-full gap-4 h-32">
+                <View className="flex flex-col items-end w-1/5 h-full">
+                    <Text className="text-primary font-inter font-medium text-xl">{formatTime(startDate)}</Text>
+                    <Text className="text-primary font-inter font-extralight text-base">{formatTime(endDate)}</Text>
+                </View>
+                <View className="flex-1 gap-3 flex-row rounded-[20px] h-full p-3" style={{ backgroundColor: "#ffffff73" }}>
+                    <View className="h-full w-[6px] rounded-full" style={{ backgroundColor: "#ffffffff" }}></View>
+                    <View className="flex-1 h-full flex-col justify-center">
+                        <Text className="text-text text-lg">Plusieurs cours</Text>
+                    </View>
+                </View>
+            </View>
+        </Pressable>
+    )
+}

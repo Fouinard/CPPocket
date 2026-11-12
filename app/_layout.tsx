@@ -1,17 +1,18 @@
-import BottomNavBar from "@/components/BottomNavBar";
-import { StartupProvider } from "@/components/contexts/StartupContext";
-import { LessonsProvider } from "@/components/contexts/LessonsContext";
-import { StorageManager } from "@/services/storage";
+import BottomNavBar from "@/shared/components/BottomNavBar";
+import { StartupProvider } from "@/shared/components/contexts/StartupContext";
+import Logger from "@/shared/services/logger/Logger";
+import { StorageManager } from "@/shared/services/storage/storage";
+import { queryClient } from "@/shared/utils/queryClient";
 import "@/styles/global.css";
 import { toastConfig } from "@/styles/ToastsStyle";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from 'expo-font';
-import { Redirect, RelativePathString, Stack } from "expo-router"; // Import de Slot
+import { Redirect, RelativePathString, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import Toast from "react-native-toast-message";
 
-// Garde l'écran natif figé
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -31,15 +32,15 @@ export default function RootLayout() {
                 if (!username && !password) {
                     setInitialRoute("startup");
                 } else if (!classId) {
-                    setInitialRoute("(options)/adetreescreen");
+                    setInitialRoute("(options)/treeselector");
                 } else {
-                    setInitialRoute("(schedule)/schedule");
+                    setInitialRoute("/schedule/schedule");
                 }
+                Logger.info("Route de chargement définir sur : ", initialRoute);
             } catch (error) {
-                console.error(error);
                 setInitialRoute("startup");
+                Logger.error("Error in prepareApp", error);
             } finally {
-                // setInitialRoute("startup");
                 setDbReady(true);
             }
         };
@@ -53,7 +54,7 @@ export default function RootLayout() {
 
     return (
         <StartupProvider onReady={() => SplashScreen.hideAsync()}>
-            <LessonsProvider>
+            <QueryClientProvider client={queryClient}>
                 <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
                     <Stack
                         screenOptions={{
@@ -65,7 +66,7 @@ export default function RootLayout() {
                     <BottomNavBar />
                     <Toast config={toastConfig} />
                 </View>
-            </LessonsProvider>
+            </QueryClientProvider>
         </StartupProvider>
     );
 }
