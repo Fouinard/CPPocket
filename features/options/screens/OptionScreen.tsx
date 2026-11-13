@@ -10,6 +10,7 @@ export default function OptionsScreen() {
             <Text className="text-text text-3xl font-semibold h-20 px-5">Options</Text>
             <OptionsLink href="/(options)/editlogins" mainText="Identifiants" description="Modifier vos identifiants Agalan" icon={<Lock color={colors.text} className="size-[17px]"/>}/>
             <OptionsLink href="/(options)/treeselector" mainText="Classe" description="Modifier votre classe" icon={<GraduationHat color={colors.text} className="size-[17px]"/>}/>
+            <OptionsLink href="/(options)/report" mainText="Support" description="Un bug, une idée, contactez-nous !" icon={<List color={colors.text} className="size-[17px]"/>}/>
             <OptionsLink href="/(options)/logsmanaging" mainText="Journaux" description="Gérer les journaux de l'application" icon={<List color={colors.text} className="size-[17px]"/>}/>
             <OptionsLink href="/(options)/about" mainText="À propos" description="Informations sur l'application" icon={<Info color={colors.text} className="size-[17px]"/>}/>
             <DisconnectButton />

@@ -8,7 +8,7 @@ import Logger from "@/shared/services/logger/Logger";
 
 export default function ScheduleDay({ date }: { date: Date }) {
     const { data, isLoading } = useSchedule(date);
-    Logger.info("Rendering ScheduleDay component", { date, data });
+    Logger.info("Rendering ScheduleDay component", { date });
 
     return (
         <View key={`schedule-day-${date.toISOString()}`}>

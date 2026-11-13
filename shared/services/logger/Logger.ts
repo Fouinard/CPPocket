@@ -55,7 +55,7 @@ export default class Logger {
         }
         const line = `[${timestamp}] [${level}] ${message}` + (serializedData ? ` | ${serializedData}` : '') + '\n'
         console.log(line)
-        if (__DEV__ && debugOnly) return
+        if (__DEV__ || debugOnly) return
         this.queue = this.queue.then(async () => {
             await this.init()
             await this.file.write(line, { append: true })

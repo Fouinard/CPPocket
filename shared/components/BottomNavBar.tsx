@@ -14,7 +14,7 @@ export default function BottomNavBar() {
         {
             icon: Calendar,
             text: "Cours",
-            open: ["/schedule/schedule", "/multipleLessons"]
+            open: ["/schedule/schedule", "/schedule/multiplelessons"]
         }, {
             icon: Gears,
             text: "Options",

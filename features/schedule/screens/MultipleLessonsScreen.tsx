@@ -1,6 +1,6 @@
 import { Lesson } from "@/features/schedule/components/Lesson";
 import Logger from "@/shared/services/logger/Logger";
-import { dateToNaturalLanguage, getRelativeDate } from "@/shared/utils/Time";
+import { dateToNaturalLanguage, getRelativeDate, formatTime } from "@/shared/utils/Time";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import useScheduleDay from "../hooks/useScheduleDay";
@@ -19,7 +19,7 @@ export default function MultipleLessonsScreen() {
     return (
         <View className="flex-1 pt-16 bg-bg px-5">
             <Text className="text-text text-3xl font-semibold">
-                {dateToNaturalLanguage(displayedDate)} - {targetPeriod[0]?.startDate.getHours()}h à {targetPeriod[0]?.endDate.getHours()}h
+                {dateToNaturalLanguage(displayedDate)} - {formatTime(targetPeriod[0]?.startDate, "h")} à {formatTime(targetPeriod[0]?.endDate, "h")}
             </Text>
             <Text className="text-grey text-lg font-normal">
                 {getRelativeDate(displayedDate)}

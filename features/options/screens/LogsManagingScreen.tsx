@@ -8,7 +8,7 @@ import useLogManager from "../hooks/useLogManager";
 
 export default function LogsManagingScreen() {
     useEffect(() => {
-        Logger.info("Navigated to LogsManaging Screen")
+        Logger.info("\n\nNavigated to LogsManaging Screen\n\n")
     }, [])
 
     const { deleteAllLogs, fileSize } = useLogManager()
@@ -31,7 +31,8 @@ export default function LogsManagingScreen() {
                 deleteAllLogs();
                 Toast.show({
                     type: "success",
-                    text1: "Journaux supprimés"
+                    text1: "Journaux supprimés",
+                    position: "bottom"
                 })
             }}>
                 Supprimer tous les journaux
