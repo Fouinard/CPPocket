@@ -12,12 +12,15 @@ export default function () {
         async function readLogs() {
             const content = await Logger.getLogsContent()
             setLogs(content)
-            requestAnimationFrame(() => {
-                scrollViewRef.current?.scrollToEnd({ animated: false })
-            })
         }
         readLogs()
     }, [])
+
+    useEffect(() => {
+        if(logs != "") {
+            scrollViewRef.current?.scrollToEnd({ animated: true })
+        }
+    }, [logs])
 
     return (
         <SafeAreaView className="flex-1 bg-bg">
