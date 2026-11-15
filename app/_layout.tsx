@@ -1,4 +1,5 @@
 import BottomNavBar from "@/shared/components/BottomNavBar";
+import { ModalProvider } from "@/shared/components/contexts/ModalContext";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
 import Logger from "@/shared/services/logger/Logger";
 import { StorageManager } from "@/shared/services/storage/storage";
@@ -55,17 +56,19 @@ export default function RootLayout() {
     return (
         <StartupProvider onReady={() => SplashScreen.hideAsync()}>
             <QueryClientProvider client={queryClient}>
-                <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
-                    <Stack
-                        screenOptions={{
-                            headerShown: false,
-                            contentStyle: { backgroundColor: "#121212" },
-                        }}
-                    />
-                    <Redirect href={initialRoute as RelativePathString} />
-                    <BottomNavBar />
-                    <Toast config={toastConfig} />
-                </View>
+                <ModalProvider>
+                    <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
+                        <Stack
+                            screenOptions={{
+                                headerShown: false,
+                                contentStyle: { backgroundColor: "#121212" },
+                            }}
+                        />
+                        <Redirect href={initialRoute as RelativePathString} />
+                        <BottomNavBar />
+                        <Toast config={toastConfig} />
+                    </View>
+                </ModalProvider>
             </QueryClientProvider>
         </StartupProvider>
     );
