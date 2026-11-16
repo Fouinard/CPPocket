@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { ScrollView, Text } from "react-native";
 import Toast from "react-native-toast-message";
 import useLogManager from "../hooks/useLogManager";
+import { useModal } from "@/shared/components/contexts/ModalContext";
 
 export default function LogsManagingScreen() {
     useEffect(() => {
@@ -12,6 +13,7 @@ export default function LogsManagingScreen() {
     }, [])
 
     const { deleteAllLogs, fileSize } = useLogManager()
+    const { confirm } = useModal();
 
     return (
         <ScrollView className="flex-1 pt-16 bg-bg">
@@ -23,17 +25,25 @@ export default function LogsManagingScreen() {
                 Poids des journaux : {formatFileSize(fileSize)}
             </Text>
             <Text className="text-text text-lg font-bold px-5 mt-4">
-                <Link href="/(dev)/logs">
+                <Link href="/logs">
                     Voir les journaux
                 </Link>
             </Text>
             <Text className="text-text text-lg font-bold px-5 mt-4" onPress={() => {
-                deleteAllLogs();
-                Toast.show({
-                    type: "success",
-                    text1: "Journaux supprimés",
-                    position: "bottom"
-                })
+                confirm({
+                    title: "Êtes-vous sur ?",
+                    message: "Cette action supprimera tous les journaux de l'application. Êtes-vous sûr de vouloir continuer ?",
+                    cancelLabel: "Annuler",
+                    confirmLabel: "Supprimer",
+                }).then((confirmed) => {
+                    if (!confirmed) return;
+                    deleteAllLogs();
+                    Toast.show({
+                        type: "success",
+                        text1: "Journaux supprimés",
+                        position: "bottom"
+                    });
+                });
             }}>
                 Supprimer tous les journaux
             </Text>

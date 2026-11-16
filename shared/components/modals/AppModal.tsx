@@ -28,8 +28,6 @@ interface Props {
     animated?: boolean;
 }
 
-
-
 export function AppModal({
     visible, title, message, children, actions,
     variant = 'default', onRequestClose, dismissOnBackdrop = false,

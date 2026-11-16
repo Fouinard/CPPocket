@@ -1,5 +1,5 @@
 import colors from "@/styles/colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
 import { mixColors } from "@/shared/utils/Color";
 import * as DocumentPicker from "expo-document-picker";
@@ -8,24 +8,8 @@ import ImageComponent from "@/features/options/components/ImageComponent";
 import Toast from "react-native-toast-message";
 import * as FileSystem from "expo-file-system/legacy";
 import { File, Paths } from "expo-file-system";
-
-// async function getFileBlob(
-//     uri: string,
-//     mimeType: string
-// ): Promise<Blob> {
-//     const base64 = await FileSystem.readAsStringAsync(uri, {
-//         encoding: FileSystem.EncodingType.Base64,
-//     });
-
-//     const binary = atob(base64);
-//     const bytes = new Uint8Array(binary.length);
-
-//     for (let i = 0; i < binary.length; i++) {
-//         bytes[i] = binary.charCodeAt(i);
-//     }
-
-//     return new Blob([bytes], { type: mimeType });
-// }
+import { useModal } from "@/shared/components/contexts/ModalContext";
+import { router } from "expo-router";
 
 interface FileToUpload {
     fileType: "attachments" | "logFile"
@@ -35,21 +19,18 @@ interface FileToUpload {
 }
 
 async function createReport(title: string, message: string, files: FileToUpload[], email?: string) {
-    console.log("Uploading files:", files);
     const formData = new FormData();
     formData.append("title", title)
     formData.append("message", message)
-    if(email) formData.append("email", email)
+    if (email) formData.append("email", email)
     for (const file of files) {
-        if(file.fileType === "logFile") {
+        if (file.fileType === "logFile") {
             const fileContent = await FileSystem.readAsStringAsync(file.fileUri, { encoding: FileSystem.EncodingType.UTF8 });
-            console.log("Log file content:", fileContent);
             const blob = new Blob([fileContent], { type: file.mimeType });
             formData.append(file.fileType, blob, file.fileName);
             continue;
         }
         const responseFile = await fetch(file.fileUri);
-        // console.log(await responseFile.text());
         const blob = await responseFile.blob();
         formData.append(file.fileType, blob, file.fileName);
     }
@@ -70,6 +51,27 @@ export default function ReportPage() {
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
     const [email, setEmail] = useState("");
+    const { confirm, alert } = useModal();
+    function handleSendLogsToggle(value: boolean) {
+        if (!value) {
+            confirm({
+                title: "Êtes-vous sûr ?",
+                message: "Désactiver l'envoi des journaux de l'application peut rendre plus difficile, voir impossible, la résolution de votre problème. Aucune information sensible n'est envoyée via les journaux. Êtes-vous sûr de vouloir continuer ?",
+                cancelLabel: "Annuler",
+                confirmLabel: "Désactiver l'envoi",
+                variant: "danger"
+            }).then((confirmed) => {
+                if (confirmed) {
+                    sendLogs(value);
+                } else {
+                    sendLogs(true);
+                }
+            });
+        } else {
+            sendLogs(value);
+        }
+    }
+
     return (
         <ScrollView className="flex-1 bg-bg" contentContainerClassName="pt-16 pb-48" showsVerticalScrollIndicator={false}>
             <Text className="text-text text-3xl font-semibold h-20 px-5">Support</Text>
@@ -113,7 +115,7 @@ export default function ReportPage() {
                         trackColor={{ false: mixColors(colors.grey, colors.text, 0.7), true: colors.accent }}
                         thumbColor={sendLogsEnabled ? mixColors(colors.accent, colors.text, 0.7) : colors.text}
                         value={sendLogsEnabled}
-                        onValueChange={sendLogs}
+                        onValueChange={handleSendLogsToggle}
                         className="h-8"
                     />
                 </View>
@@ -194,16 +196,13 @@ export default function ReportPage() {
                         mimeType: file.mimeType ?? "application/octet-stream",
                     }));
                     if (sendLogsEnabled) {
+                        Logger.logAppDeviceInfo();
                         const logsContent = await Logger.getLogsContent();
                         const logFile = new File(Paths.cache, "application.log");
-                        if(!logFile.exists) {
+                        if (!logFile.exists) {
                             logFile.create();
                         }
                         await logFile.write(logsContent, { append: false });
-                        // console.log("Logs content:", logFile.textSync());
-                        // const logsFile = new File(Logger.getFileUri())
-                        // const logsFileUri = FileSystem.cacheDirectory + "logs.txt";
-                        // await FileSystem.writeAsStringAsync(logsFileUri, logsContent, { encoding: FileSystem.EncodingType.UTF8 });
                         files.push({
                             fileType: "logFile" as const,
                             fileUri: logFile.uri,
@@ -211,8 +210,26 @@ export default function ReportPage() {
                             mimeType: logFile.type ?? "text/plain",
                         });
                     }
+                    let send = false;
+                    if (email.trim() == "") {
+                        const confirmed = await confirm({
+                            title: "Aucun email renseigné",
+                            message: "Vous n'avez pas renseigné d'email de contact. Si vous ne le faites pas, nous ne pourrons pas vous recontacter pour poursuivre votre ticket. Voulez-vous continuer sans email ?",
+                            confirmLabel: "Continuer sans email"
+                        })
+                        send = confirmed;
+                    } else {
+                        send = true;
+                    }
+                    if(!send) return;
                     const result = await createReport(title, message, files as FileToUpload[], email != "" ? email : undefined);
-                    console.log(result)
+                    if(result.success) {
+                        await alert({
+                            title: "Rapport envoyé",
+                            message: "Merci pour votre retour !"
+                        });
+                        router.back();
+                    }
                 }}>
                     <Text className="text-text text-lg font-normal">
                         Envoyer le rapport

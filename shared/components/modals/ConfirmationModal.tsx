@@ -1,4 +1,3 @@
-// shared/components/modal/ConfirmModal.tsx
 import { ReactNode } from 'react';
 import { AppModal, ModalVariant } from './AppModal';
 
@@ -16,7 +15,7 @@ interface Props {
 export function ConfirmationModal({
     visible, title, message, variant,
     confirmLabel = 'Confirmer', cancelLabel = 'Annuler',
-    onCancel, onConfirm,
+    onCancel, onConfirm
 }: Props) {
     return (
         <AppModal

@@ -17,29 +17,6 @@ export default function () {
             <Link href="/startup">
                 <Text className="text-text">Aller à /startup</Text>
             </Link>
-            <Link href="/(options)/treeselector">
-                <Text className="text-text">Afficher le selecteur de classe</Text>
-            </Link>
-            <Link href="/logs">
-                <Text className="text-text">Afficher les logs</Text>
-            </Link>
-            <Pressable onPress={async () => {
-                Logger.deleteAllLogs();
-                Toast.show({
-                    type: "success",
-                    text1: "Logs supprimés"
-                })
-            }}>
-                <Text className="text-text">Supprimer tous ses logs</Text>
-            </Pressable>
-            <Pressable onPress={async () => {
-                Logger.info("Logging out user and clearing credentials");
-                await StorageManager.Secure.remove("username");
-                await StorageManager.Secure.remove("password");
-                router.replace("/startup");
-            }}>
-                <Text className="text-text">Se déconnecter</Text>
-            </Pressable>
             <Pressable onPress={async () => {
                 Logger.info("Clearing class selection");
                 await StorageManager.Default.remove("ADEClassTreeList");
@@ -59,7 +36,6 @@ export default function () {
             }}>
                 <Text className="text-text">Nouveau départ</Text>
             </Pressable>
-
             <Pressable onPress={async () => {
                 Logger.info("\n\nDisabling developer mode\n\n");
                 await StorageManager.Default.set("developerMode", "false");

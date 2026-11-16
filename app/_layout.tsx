@@ -68,19 +68,19 @@ export default function RootLayout() {
     return (
         <StartupProvider onReady={() => SplashScreen.hideAsync()}>
             <QueryClientProvider client={queryClient}>
-                <ModalProvider>
-                    <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
+                <View className="flex-1 max-w-screen" style={{ backgroundColor: "#121212" }}>
+                    <ModalProvider>
                         <Stack
                             screenOptions={{
                                 headerShown: false,
-                                contentStyle: { backgroundColor: "#121212" },
+                                contentStyle: { backgroundColor: "#121212" }
                             }}
                         />
                         <Redirect href={initialRoute as RelativePathString} />
+                    </ModalProvider>
                         <BottomNavBar />
                         <Toast config={toastConfig} />
-                    </View>
-                </ModalProvider>
+                </View>
             </QueryClientProvider>
         </StartupProvider>
     );

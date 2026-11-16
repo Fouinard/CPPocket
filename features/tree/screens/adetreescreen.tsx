@@ -1,4 +1,3 @@
-// src/features/tree/screens/ADETreeScreen.tsx
 import { TreeConfirmationModal } from '@/features/tree/components/TreeConfirmationModal';
 import { TreeNodeRow } from '@/features/tree/components/TreeNodeRow';
 import { useClassTree } from '@/features/tree/hooks/useClassTree';
