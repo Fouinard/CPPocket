@@ -5,25 +5,49 @@ type LogLevel = 'info' | 'warn' | 'error' | 'debug'
 
 type LogListener = () => void
 
+const LOG_FILE_REGEX = /^application.*\.log$/
+
 export default class Logger {
     private static directory = new Directory(Paths.document, 'logs')
-    private static file = new File(Logger.directory, 'application.log')
     private static queue: Promise<void> = Promise.resolve()
-    private static initialized = false
+    private static readyDay: string | null = null
     private static listeners = new Set<LogListener>()
 
+    private static getDayKey() {
+        const now = new Date()
+        const pad = (n: number) => String(n).padStart(2, '0')
+        return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+    }
 
-    private static async init() {
-        if (this.initialized) return
+    private static getFile() {
+        return new File(this.directory, `application-${this.getDayKey()}.log`)
+    }
+
+    private static ensureReady() {
+        const day = this.getDayKey()
+        if (this.readyDay === day) return
+
         if (!this.directory.exists) {
             this.directory.create({ intermediates: true })
         }
-        if (!this.file.exists) {
-            this.file.create()
-        }
-        this.initialized = true
-    }
 
+        const file = this.getFile()
+        if (!file.exists) {
+            file.create()
+        }
+
+        try {
+            for (const item of this.directory.list()) {
+                if (item instanceof File && item.name !== file.name && LOG_FILE_REGEX.test(item.name)) {
+                    item.delete()
+                }
+            }
+        } catch (error) {
+            console.error('Logger purge error:', error)
+        }
+
+        this.readyDay = day
+    }
 
     static subscribe(listener: LogListener) {
         this.listeners.add(listener)
@@ -42,7 +66,6 @@ export default class Logger {
         })
     }
 
-
     private static log(level: LogLevel, message: string, data?: unknown, debugOnly: boolean = false) {
         const timestamp = new Date().toISOString()
         let serializedData = ''
@@ -58,8 +81,8 @@ export default class Logger {
         console.log(line)
         if (__DEV__ || debugOnly) return
         this.queue = this.queue.then(async () => {
-            await this.init()
-            await this.file.write(line, { append: true })
+            this.ensureReady()
+            await this.getFile().write(line, { append: true })
             this.notify()
         }).catch(error => {
             console.error('Logger write error:', error)
@@ -87,21 +110,24 @@ export default class Logger {
     }
 
     static getFileUri() {
-        return this.file.uri
+        this.ensureReady()
+        return this.getFile().uri
     }
 
     static async getLogsContent() {
-        await this.init()
-        return await this.file.text()
+        this.ensureReady()
+        return await this.getFile().text()
     }
 
     static async deleteAllLogs() {
-        await this.file.write('', { append: false })
+        this.ensureReady()
+        await this.getFile().write('', { append: false })
         this.info('All logs deleted', null)
     }
 
     static getLogFileSize() {
-        return this.file.size
+        this.ensureReady()
+        return this.getFile().size
     }
 
     static logAppDeviceInfo() {
