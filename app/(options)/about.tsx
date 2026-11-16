@@ -69,10 +69,10 @@ export default function () {
             <Text className="text-text text-lg font-normal px-5 mt-4">
                 Pour toute question ou suggestion, veuillez nous contacter à l'adresse <Text
                     className="text-accent" onPress={() => {
-                        Logger.info("Opening mailto:contact@fouinard.fr");
-                        Linking.openURL("mailto:contact@fouinard.fr");
+                        Logger.info("Opening mailto:cppocket@fouinard.fr");
+                        Linking.openURL("mailto:cppocket@fouinard.fr");
                     }}>
-                    contact@fouinard.fr
+                    cppocket@fouinard.fr
                 </Text>
             </Text>
             <Text className="text-text text-3xl font-semibold h-10 px-5 mt-8">

@@ -7,7 +7,7 @@ import Logger from "../services/logger/Logger";
 
 export default function BottomNavBar() {
     Logger.info("Rendering BottomNavBar");
-    const disabledPathnames = ["/startup", "/(options)/treeselector", "/viewers/MarkdownViewer", "/logs"];
+    const disabledPathnames = ["/startup", "/treeselector", "/viewers/MarkdownViewer", "/logs", "/updateOfLegals"];
     const pathname = usePathname();
     const [developerMode, setDeveloperMode] = useState(false);
     const navBar = [
@@ -18,7 +18,7 @@ export default function BottomNavBar() {
         }, {
             icon: Gears,
             text: "Options",
-            open: ["/options", "/treeselector", "/editlogins", "/about", "/logsmanaging"]
+            open: ["/options", "/treeselector", "/editlogins", "/about", "/logsmanaging", "/report"]
         }, {
             icon: Code,
             text: "Dev",

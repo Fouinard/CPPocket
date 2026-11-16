@@ -1,3 +1,4 @@
+import { LegalsUpdater } from "@/features/legals/LegalsUpdater";
 import BottomNavBar from "@/shared/components/BottomNavBar";
 import { ModalProvider } from "@/shared/components/contexts/ModalContext";
 import { StartupProvider } from "@/shared/components/contexts/StartupContext";
@@ -25,22 +26,33 @@ export default function RootLayout() {
     });
 
     useEffect(() => {
+        const defaultRoute = ["schedule/schedule", "report", "updateOfLegals"][0];
         const prepareApp = async () => {
+            let route: string = "startup";
             try {
                 const username = await StorageManager.Secure.get("username");
                 const password = await StorageManager.Secure.get("password");
                 const classId = await StorageManager.Default.get("ADEClassTreeList");
                 if (!username && !password) {
-                    setInitialRoute("startup");
+                    route = "startup";
                 } else if (!classId) {
-                    setInitialRoute("(options)/treeselector");
+                    route = "(options)/treeselector";
                 } else {
-                    setInitialRoute("/schedule/schedule");
+                    const [isUpdateAvailable, cguUpdated, privacyUpdated] = await LegalsUpdater.isUpdateAvailable();
+                    Logger.info("Update available", isUpdateAvailable);
+                    Logger.info("CGU updated", cguUpdated);
+                    Logger.info("Privacy updated", privacyUpdated);
+                    if (isUpdateAvailable) {
+                        route = `updateOfLegals?_cguUpdated=${cguUpdated}&_privacyUpdated=${privacyUpdated}`;
+                    } else {
+                        route = defaultRoute;
+                    }
                 }
-                Logger.info("Route de chargement définir sur : ", initialRoute);
+                Logger.info("Route de chargement définie sur", route);
+                setInitialRoute(route);
             } catch (error) {
-                setInitialRoute("startup");
                 Logger.error("Error in prepareApp", error);
+                setInitialRoute("startup");
             } finally {
                 setDbReady(true);
             }

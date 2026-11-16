@@ -1,3 +1,4 @@
+import { getAppDeviceInfo } from '@/shared/utils/getAppDeviceInfo'
 import { Directory, File, Paths } from 'expo-file-system'
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug'
@@ -101,5 +102,10 @@ export default class Logger {
 
     static getLogFileSize() {
         return this.file.size
+    }
+
+    static logAppDeviceInfo() {
+        const deviceInfo = getAppDeviceInfo()
+        this.info('\n\nApp device info : ', deviceInfo)
     }
 }

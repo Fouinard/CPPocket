@@ -50,6 +50,12 @@
             "cmakeVersion": "3.31.6"
           }
         }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
       ]
     ],
     "experiments": {
