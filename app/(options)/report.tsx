@@ -34,7 +34,7 @@ async function createReport(title: string, message: string, files: FileToUpload[
         const blob = await responseFile.blob();
         formData.append(file.fileType, blob, file.fileName);
     }
-    const response = await fetch("http://82.66.51.212:2025/api/report/send", {
+    const response = await fetch("https://cppocket.fouinard.fr/api/report/send", {
         method: "POST",
         body: formData,
         headers: {
