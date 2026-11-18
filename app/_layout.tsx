@@ -38,13 +38,19 @@ export default function RootLayout() {
                 } else if (!classId) {
                     route = "(options)/treeselector";
                 } else {
-                    const [isUpdateAvailable, cguUpdated, privacyUpdated] = await LegalsUpdater.isUpdateAvailable();
-                    Logger.info("Update available", isUpdateAvailable);
-                    Logger.info("CGU updated", cguUpdated);
-                    Logger.info("Privacy updated", privacyUpdated);
-                    if (isUpdateAvailable) {
-                        route = `updateOfLegals?_cguUpdated=${cguUpdated}&_privacyUpdated=${privacyUpdated}`;
-                    } else {
+                    try {
+                        const [isUpdateAvailable, cguUpdated, privacyUpdated] = await LegalsUpdater.isUpdateAvailable();
+                        Logger.info("Update available", isUpdateAvailable);
+                        Logger.info("CGU updated", cguUpdated);
+                        Logger.info("Privacy updated", privacyUpdated);
+                        if (isUpdateAvailable) {
+                            route = `updateOfLegals?_cguUpdated=${cguUpdated}&_privacyUpdated=${privacyUpdated}`;
+                        } else {
+                            route = defaultRoute;
+                        }
+                        
+                    } catch (error) {
+                        Logger.error("Error in prepareApp: Failed to fetch legals manifest", error);
                         route = defaultRoute;
                     }
                 }
